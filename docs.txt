@@ -22,3 +22,12 @@ Content:
     description:
         a short message describing the extension
         this is displayed to the users
+
+    permissions:
+        list of Chrome APIs that the extension is allowed to use
+
+    action:
+
+    background:
+
+    content_scripts      

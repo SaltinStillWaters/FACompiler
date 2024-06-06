@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1b4d32">
+  <meta name="robots" content="noindex,nofollow" />
+  <meta name="apple-itunes-app" content="app-id=480883488">
+  <link rel="manifest" href="/web-app-manifest/manifest.json">
+  <meta name="sentry-trace" content="f7395c48644b4251a325f99ffaaf8a1e-84ffff9a2cf7400b-0" />
+  <title>Quiz: [F1-FORMATIVE]: First Formative Assessment</title>
+
+  <link rel="preload" href="https://du11hjcvx0uqb.cloudfront.net/dist/fonts/lato/extended/Lato-Regular-bd03a2cc27.woff2"
+    as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="https://du11hjcvx0uqb.cloudfront.net/dist/fonts/lato/extended/Lato-Bold-cccb897485.woff2"
+    as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="https://du11hjcvx0uqb.cloudfront.net/dist/fonts/lato/extended/Lato-Italic-4eb103b4d1.woff2"
+    as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="stylesheet"
+    href="https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/no_variables/bundles/fonts-6ee09b0b2f.css"
+    media="screen" />
+  <link rel="stylesheet"
+    href="https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/b77cb3b7aec7844f5cae5231385414ce/variables-7dd4b80918af0e0218ec0229e4bd5873.css"
+    media="all" />
+  <link rel="stylesheet"
+    href="https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/new_styles_normal_contrast/bundles/common-6c41747de3.css"
+    media="all" />
+  <link rel="stylesheet"
+    href="https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/new_styles_normal_contrast/bundles/quizzes-0b759d57f7.css"
+    media="screen" />
+  <link rel="stylesheet"
+    href="https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/new_styles_normal_contrast/bundles/tinymce-59c32fac15.css"
+    media="screen" />
+  <link rel="stylesheet"
+    href="https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/new_styles_normal_contrast/bundles/new_user_tutorials-2950c871dd.css"
+    media="screen" />
+  <link rel="apple-touch-icon"
+    href="https://du11hjcvx0uqb.cloudfront.net/dist/images/apple-touch-icon-585e5d997d.png" />
+  <link rel="icon" type="image/x-icon" href="https://du11hjcvx0uqb.cloudfront.net/dist/images/favicon-e10d657a73.ico" />
+
+  <link rel="stylesheet"
+    href="https://instructure-uploads-apse1.s3.ap-southeast-1.amazonaws.com/account_98220000000000001/attachments/15077925/mbg-style.css"
+    media="all" />
+
+  <script>if (navigator.userAgent.match(/(MSIE|Trident\/)/)) location.replace('/ie-is-not-supported.html')</script>
+  <script>
+    INST = { "environment": "production", "allowMediaComments": true, "kalturaSettings": { "domain": "apse1.nv.instructuremedia.com", "resource_domain": "apse1.nv.instructuremedia.com", "rtmp_domain": "sin.rtmp.instructuremedia.com", "partner_id": "2", "subpartner_id": "0", "player_ui_conf": "0", "kcw_ui_conf": "0", "upload_ui_conf": "0", "max_file_size_bytes": 534773760, "do_analytics": false, "hide_rte_button": false, "js_uploader": true }, "logPageViews": true, "editorButtons": [{ "name": "Commons Favorites", "id": 1, "favorite": false, "url": "https://commons.singapore.canvaslms.com/api/lti/favorite-resources", "icon_url": "https://commons.singapore.canvaslms.com/img/icon_commons.png", "canvas_icon_class": null, "width": 800, "height": 400, "use_tray": true, "always_on": false, "description": "\u003cp\u003eFind and share course content\u003c/p\u003e\n" }, { "name": "Google Apps", "id": 60, "favorite": false, "url": "https://google-drive-lti-sin-prod.instructure.com/lti/rce-content-selection", "icon_url": "https://google-drive-lti-sin-prod.instructure.com/icon.png", "canvas_icon_class": null, "width": 700, "height": 600, "use_tray": false, "always_on": false, "description": "\u003cp\u003eAllows you to pull in documents from Google Drive to Canvas\u003c/p\u003e\n" }, { "name": "Microsoft 0365", "id": 3035, "favorite": false, "url": "https://office365-sin-prod.instructure.com/lti/rce-content-item", "icon_url": "https://office365-sin-prod.instructure.com/images/office365_icon.png", "canvas_icon_class": null, "width": 900, "height": 600, "use_tray": false, "always_on": false, "description": "\u003cp\u003eAllows you to pull in documents from Office 365 to Canvas\u003c/p\u003e\n" }, { "name": "Canvas Studio", "id": 8514, "favorite": false, "url": "https://feu.instructuremedia.com/lti/launch?custom_arc_launch_type=content_select\u0026custom_lti_use_case=editor_button", "icon_url": "https://files.instructuremedia.com/logos/studio-logo-squid-tiny-electric.svg", "canvas_icon_class": null, "width": 560, "height": 600, "use_tray": false, "always_on": false, "description": "\u003cp\u003eVideo for Education\u003c/p\u003e\n" }, { "name": "Microsoft Teams Meetings", "id": 8521, "favorite": true, "url": "https://msteams-lti-iad-prod.inscloudgate.net/resource_link_request", "icon_url": "https://msteams-lti-iad-prod.inscloudgate.net/images/placement_icon.png", "canvas_icon_class": null, "width": 575, "height": 700, "use_tray": false, "always_on": false, "description": "\u003cp\u003eMicrosoft Teams Meetings integration for Canvas LMS\u003c/p\u003e\n" }] };
+    ENV = { "ASSET_HOST": "https://du11hjcvx0uqb.cloudfront.net", "active_brand_config_json_url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/b77cb3b7aec7844f5cae5231385414ce/variables-7dd4b80918af0e0218ec0229e4bd5873.json", "active_brand_config": { "md5": "b77cb3b7aec7844f5cae5231385414ce", "variables": {}, "share": false, "name": null, "created_at": "2022-08-29T15:14:23+08:00", "js_overrides": "https://instructure-uploads-apse1.s3.ap-southeast-1.amazonaws.com/account_98220000000000001/attachments/14128080/addon_miles_tertiary.js", "css_overrides": "", "mobile_js_overrides": "", "mobile_css_overrides": "", "parent_md5": "456f58cf53456342ba70382e0f13ef4d" }, "confetti_branding_enabled": false, "url_to_what_gets_loaded_inside_the_tinymce_editor_css": ["https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/b77cb3b7aec7844f5cae5231385414ce/variables-7dd4b80918af0e0218ec0229e4bd5873.css", "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/new_styles_normal_contrast/bundles/what_gets_loaded_inside_the_tinymce_editor-a64c7fe33c.css", "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/no_variables/bundles/fonts-6ee09b0b2f.css"], "url_for_high_contrast_tinymce_editor_css": ["https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/default/variables-high_contrast-7dd4b80918af0e0218ec0229e4bd5873.css", "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/new_styles_high_contrast/bundles/what_gets_loaded_inside_the_tinymce_editor-fa0672d544.css", "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/no_variables/bundles/fonts-6ee09b0b2f.css"], "current_user_id": "153047", "current_user_global_id": "98220000000153047", "current_user_heap_id": "uu-2-c3735602fe1f9c1c0e5a8f9d7e0358fea74865c68f859fb6b138cd477ea4b2f2-1elHi48x56LIyRdUw1RFh2n4Gm3b8j0aolESLxZ0", "current_user_roles": ["user", "student"], "current_user_is_student": true, "current_user_types": [], "current_user_disabled_inbox": false, "current_user_visited_tabs": null, "discussions_reporting": false, "files_domain": "cluster220.canvas-user-content.com", "group_information": null, "DOMAIN_ROOT_ACCOUNT_ID": "98220000000000001", "DOMAIN_ROOT_ACCOUNT_UUID": "1elHi48x56LIyRdUw1RFh2n4Gm3b8j0aolESLxZ0", "k12": false, "help_link_name": "Help", "help_link_icon": "help", "use_high_contrast": false, "auto_show_cc": false, "disable_celebrations": false, "disable_keyboard_shortcuts": false, "LTI_LAUNCH_FRAME_ALLOWANCES": ["geolocation *", "microphone *", "camera *", "midi *", "encrypted-media *", "autoplay *", "clipboard-write *", "display-capture *"], "DEEP_LINKING_POST_MESSAGE_ORIGIN": "https://feu.instructure.com", "comment_library_suggestions_enabled": false, "SETTINGS": { "open_registration": false, "collapse_global_nav": false, "release_notes_badge_disabled": true }, "RAILS_ENVIRONMENT": "Production", "IN_PACED_COURSE": false, "SENTRY_FRONTEND": { "dsn": "https://355a1d96717e4038ac25aa852fa79a8f@relay-sin.sentry.insops.net/388", "org_slug": "instructure", "base_url": "https://sentry.insops.net", "normalized_route": "/courses/{course_id}/quizzes/{quiz_id}/take", "errors_sample_rate": "0.005", "traces_sample_rate": "0.005", "url_deny_pattern": "instructure-uploads.*amazonaws.com", "revision": "canvas-lms@20240605.274" }, "DATA_COLLECTION_ENDPOINT": "https://canvas-frontend-data-sin-prod.inscloudgate.net/submit", "DOMAIN_ROOT_ACCOUNT_SFID": "001A0000015jo8X", "DIRECT_SHARE_ENABLED": false, "CAN_VIEW_CONTENT_SHARES": false, "FEATURES": { "featured_help_links": true, "account_level_blackout_dates": false, "render_both_to_do_lists": false, "course_paces_redesign": true, "course_paces_for_students": true, "explicit_latex_typesetting": false, "media_links_use_attachment_id": true, "permanent_page_links": true, "differentiated_modules": false, "enhanced_course_creation_account_fetching": false, "instui_for_import_page": false, "multiselect_gradebook_filters": true, "assignment_edit_placement_not_on_announcements": false, "platform_service_speedgrader": false, "instui_header": false, "rce_find_replace": true, "product_tours": false, "usage_rights_discussion_topics": true, "granular_permissions_manage_users": true, "create_course_subaccount_picker": true, "lti_deep_linking_module_index_menu_modal": true, "lti_dynamic_registration": true, "lti_multiple_assignment_deep_linking": true, "lti_overwrite_user_url_input_select_content_dialog": true, "buttons_and_icons_root_account": false, "extended_submission_state": false, "scheduled_page_publication": true, "send_usage_metrics": false, "rce_transform_loaded_content": false, "lti_assignment_page_line_items": true, "mobile_offline_mode": false, "react_discussions_post": false, "instui_nav": false, "enhanced_developer_keys_tables": true, "lti_registrations_discover_page": false, "enhanced_rubrics": false, "embedded_release_notes": true, "canvas_k6_theme": false, "new_math_equation_handling": true }, "current_user": { "id": "153047", "anonymous_id": "3a3b", "display_name": "MBPejana", "avatar_image_url": "https://feu.instructure.com/images/thumbnails/15921206/4kLkmeqYYrfgP2tBz8P3VqFLEPpa8amL9hvEKHrP", "html_url": "https://feu.instructure.com/about/153047", "pronouns": null, "avatar_is_fallback": false }, "current_user_is_admin": false, "page_view_update_url": "/page_views/05593bd7-4ccb-483c-8d58-93034db5301e?page_view_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpIjoiMDU1OTNiZDctNGNjYi00ODNjLThkNTgtOTMwMzRkYjUzMDFlIiwidSI6OTgyMjAwMDAwMDAxNTMwNDcsImMiOiIyMDI0LTA2LTA2VDA2OjU5OjMwLjE5WiJ9.iXOlP2dgwrIa1ebLEJfdBVK5VVHPWJayYolr8nf7zaw", "context_asset_string": "course_92006", "ping_url": "https://feu.instructure.com/api/v1/courses/92006/ping", "TIMEZONE": "Asia/Hong_Kong", "CONTEXT_TIMEZONE": "Asia/Hong_Kong", "LOCALES": ["en"], "BIGEASY_LOCALE": "en_US", "FULLCALENDAR_LOCALE": "en", "MOMENT_LOCALE": "en", "rce_auto_save_max_age_ms": 86400000, "K5_USER": false, "USE_CLASSIC_FONT": false, "K5_HOMEROOM_COURSE": false, "K5_SUBJECT_COURSE": false, "LOCALE_TRANSLATION_FILE": "/dist/javascripts/translations/en-12343ce012.json", "ACCOUNT_ID": "2279", "user_cache_key": "bUhRQ3FORnkzYVV5YUROOGdTWjRxQ3BmMDZld1o4aXNVUnpvQVRORHZ5Zlc9\nO1twLTA/OntQXz1IVXBncmFxZTtuamFsa2hwdm9pdWxraW1tYXFld2c=\n", "current_context": { "id": "92006", "name": "3TSY2324_GED0031_TN21-59", "type": "Course", "url": "https://feu.instructure.com/courses/92006" }, "RICH_CONTENT_APP_HOST": "rich-content-sin.inscloudgate.net", "JWT": "ZXlKaGJHY2lPaUprYVhJaUxDSmxibU1pT2lKQk1qVTJSME5OSWl3aWNtVm5hVzl1SWpvaVlYQXRjMjkxZEdobFlYTjBMVEVpTENKbGJuWnBjbTl1YldWdWRDSTZJbEJ5YjJSMVkzUnBiMjRpZlEuLnIyMVZwTkJsdlJKaVZLUHouRlBKc1ltX0NCbk95STZXZllHdXlaNGhzYmx1UXIyOTYzczlrY0kxaDNDSmoyb213bjZJNWZWYjQxZkNNaURQTEZ6eFBrWGhEcUQyX1NaMGlySVFGX3NBczRwTkRLSzBHN3BnU3JqME0zN0ptYll3R2ZvcG9pLU5LZ2hnbFBMRGZBSTc5UUdSOTR4Nm5LOWZnUy1vNUU0ekUyZ3drLTZ4TWhyRDdxb3E1V0VaVUp5NGVmX3RpVm1ieTFtZUJ3R1JFd2dBbjFqdE54aWtnUDdyMkdNLUV2QzBDU29CQzFjeDBicUdWVTBQY1ptU1VZZ2h1SkNnaG5fV0hDY08wZUxmZGFkSHpRRTd2VmRoNnhvY1ctdlIwVzVtbmlyMkt0MXYtajQ3bnotLWdpeW1kd3dfLVpjX2JibnFyeUFCeTJSbHlqbmdTRzhiNHAxdTZ3SG1UMm5vWjZHNEgwWjJPbjNvbmt2Sk1GSldLMzVBSWVIZE9iRG1neGFTZHBFTWdyZ2dIQlk5SkZhOGlDY21qRS1KSDkzMzBRSkJCR1R3ZTFaS3ZFN1h3QmJTU1ZoU2FoeDZTR2ZZb3o4QXRiMXZsS004dE1uSWFkWWpRV2FQSmgwRHJZSjVxV0stQ19LdWdNcHZmR3ZyR0xocVlzVFlXVjhsOEE2Vk9TVUVHclBucW04VmdwU09NMDhyTTVFYVRBOXh0WXpHaFhEQlltTlJISjJtN1RPY0dvZWh3U1NLVmczTjlHcmRJeGQ0VWpuWHNlZDZYTlhvd0cxcXBMZHJudmJxZFpNUVJyQ25SOEZVeE1CU1h1YWJmSVF2SVFGU1lzdnNrZ1A0VjJveU5CYlRyUkJON2xvU3UwRGNYUjZJb3RLT1Mtcmw3Vll5RW1qbkZya2JZbUJaLWVJTXBzNUxqbVkwcVpzZ1JnblZ3a1h6cHI5Ql83Q3VHQjZvNFlrRGxOZjQ1c0hpdEtDNVUyZFlZal9uUXQyM1FhVVlLR2dhbGhTaFd3QXZBNjhjWm9IREVsR2xQUTQyM1lXaWFnR3drZk0xUFdYaU5USVNqTGU0em1HV2EtUWoxTi1rLndCWFI0T0p1dFZCcEpmZEtET2FJQ1E=", "RICH_CONTENT_CAN_UPLOAD_FILES": false, "RICH_CONTENT_CAN_EDIT_FILES": false, "RICH_CONTENT_FILES_TAB_DISABLED": true, "RICH_CONTENT_INST_RECORD_TAB_DISABLED": false, "SUBMISSION_DOWNLOAD_DIALOG_TITLE": "Download All Quiz File Upload Submissions", "UPLOAD_URL": "/api/v1/courses/92006/quizzes/1168826/submissions/self/files", "SUBMISSION_VERSIONS_URL": "https://feu.instructure.com/courses/92006/quizzes/1168826/submission_versions", "QUIZ_SUBMISSION_EVENTS_URL": "https://feu.instructure.com/api/v1/courses/92006/quizzes/1168826/submissions/10467922/events", "ATTACHMENTS": {}, "CONTEXT_ACTION_SOURCE": "quizzes", "COURSE_ID": "92006", "LOCKDOWN_BROWSER": false, "QUIZ": { "id": "1168826", "title": "[F1-FORMATIVE]: First Formative Assessment", "html_url": "https://feu.instructure.com/courses/92006/quizzes/1168826", "mobile_url": "https://feu.instructure.com/courses/92006/quizzes/1168826?force_user=1\u0026persist_headless=1", "description": "\u003cp\u003eGood day,\u0026nbsp;\u003cbr\u003e\u003cbr\u003eYou have been allocated \u003cstrong\u003eten (10)\u003c/strong\u003e chances to complete this \u003cstrong\u003eformative assessmen\u003c/strong\u003et.\u003c/p\u003e\n\u003cp\u003eOnly upon achieving a mastery score of \u003cstrong\u003eat least 80%\u003c/strong\u003e will you be eligible to progress to the subsequent module.\u003c/p\u003e\n\u003cp\u003e\u0026nbsp;\u003c/p\u003e\n\u003cp\u003eYour diligence and dedication are sincerely appreciated.\u003c/p\u003e\n\u003cp\u003e\u0026nbsp;\u003c/p\u003e\n\u003cp\u003eBest Regards,\u003c/p\u003e\n\u003cp\u003eHSC Department\u003c/p\u003e", "quiz_type": "assignment", "time_limit": 15, "timer_autosubmit_disabled": false, "shuffle_answers": true, "show_correct_answers": false, "scoring_policy": "keep_latest", "allowed_attempts": 10, "one_question_at_a_time": true, "question_count": 10, "points_possible": 10.0, "cant_go_back": true, "ip_filter": null, "due_at": null, "lock_at": null, "unlock_at": null, "published": true, "locked_for_user": false, "hide_results": "always", "show_correct_answers_at": null, "hide_correct_answers_at": null, "all_dates": [{ "due_at": null, "unlock_at": null, "lock_at": null, "base": true }], "can_update": false, "require_lockdown_browser": false, "require_lockdown_browser_for_results": false, "require_lockdown_browser_monitor": false, "lockdown_browser_monitor_data": "", "permissions": { "manage": false, "read": true, "create": false, "update": false, "submit": true, "preview": false, "delete": false, "read_statistics": false, "grade": false, "review_grades": false, "view_answer_audits": false }, "quiz_reports_url": "https://feu.instructure.com/api/v1/courses/92006/quizzes/1168826/reports", "quiz_statistics_url": "https://feu.instructure.com/api/v1/courses/92006/quizzes/1168826/statistics", "important_dates": false, "quiz_submission_versions_html_url": "https://feu.instructure.com/courses/92006/quizzes/1168826/submission_versions", "assignment_id": "2497260", "one_time_results": false, "visible_to_everyone": true, "assignment_group_id": "207320", "show_correct_answers_last_attempt": false, "version_number": 3, "has_access_code": false, "post_to_sis": false, "migration_id": "mastercourse_9822_3342_a1f2c34a318470fe38cb968350413a77", "in_paced_course": false }, "QUIZ_DETAILS_URL": "https://feu.instructure.com/courses/92006/quizzes/1168826/managed_quiz_data", "QUIZZES_URL": "https://feu.instructure.com/courses/92006/quizzes", "MAX_GROUP_CONVERSATION_SIZE": 100, "CONDITIONAL_RELEASE_SERVICE_ENABLED": true, "CONDITIONAL_RELEASE_ENV": { "assignment": { "id": "2497260", "title": "[F1-FORMATIVE]: First Formative Assessment", "description": "\u003cp\u003eGood day,\u0026nbsp;\u003cbr\u003e\u003cbr\u003eYou have been allocated \u003cstrong\u003eten (10)\u003c/strong\u003e chances to complete this \u003cstrong\u003eformative assessmen\u003c/strong\u003et.\u003c/p\u003e\n\u003cp\u003eOnly upon achieving a mastery score of \u003cstrong\u003eat least 80%\u003c/strong\u003e will you be eligible to progress to the subsequent module.\u003c/p\u003e\n\u003cp\u003e\u0026nbsp;\u003c/p\u003e\n\u003cp\u003eYour diligence and dedication are sincerely appreciated.\u003c/p\u003e\n\u003cp\u003e\u0026nbsp;\u003c/p\u003e\n\u003cp\u003eBest Regards,\u003c/p\u003e\n\u003cp\u003eHSC Department\u003c/p\u003e", "points_possible": 10.0, "grading_type": "points", "submission_types": "online_quiz", "grading_scheme": { "A": 0.94, "A-": 0.9, "B+": 0.87, "B": 0.84, "B-": 0.8, "C+": 0.77, "C": 0.74, "C-": 0.7, "D+": 0.67, "D": 0.64, "D-": 0.61, "F": 0.0 } }, "course_id": "92006", "stats_url": "/api/v1/courses/92006/mastery_paths/stats", "rule": null }, "badge_counts": { "submissions": 9 }, "notices": [], "active_context_tab": "quizzes" };
+    BRANDABLE_CSS_HANDLEBARS_INDEX = [["new_styles_normal_contrast", "new_styles_high_contrast", "new_styles_normal_contrast_rtl", "new_styles_high_contrast_rtl"], { "10": ["8300658022", 0, "250b5824c2", 2], "15": ["fc26aa5fd4", 0, "f904416063", 2], "19": ["df5777ed9c"], "61": ["f3934dab06", "f405852bb2", "ee5810890b", "3fd9943b9a"], "67": ["8b57f54e71", 0, "43833dde85", 2], "71": ["35b89b103a", "4304be7d41", "58dbfc2651", "2932678b1c"], "06": ["cb9f63cba6", 0, "2be010fc14", 2], "f0": ["7c947dce20", 0, 0, 0], "c8": ["12d5e4d1e8", "9f7b02d283", "4ebd280f3e", "b547456f4c"], "1e": ["02e336724a", "d7bb142b0a", "d7ac7fdfb8", "c03b9b261e"], "b3": ["8ebc71ebc3", "cf8efa05c8", "4efdc93a21", "fd6d3a9780"], "0c": ["c26e82abac", 0, "b71e9cbd6d", 2], "da": ["efb9fe6d7c", "edbd1b5e83", "a6dc56afb7", "dfb2d13098"], "1d": ["a3bfcb7961", 0, "90682b3bbe", 2], "08": ["64bff5a97d"], "e2": ["11429f119a"], "9f": ["35936a18c3", 0, 0, 0], "2b": ["abf63f48ef", "bf8e135ffe", "378e0c136b", "9833e305e6"], "2c": ["6d919206cd", 0, 0, 0], "c2": ["6f2721ae01"], "9c": ["ecafc938e4", 0, "59e7c22304", 2], "c5": ["ebf0e1382f", "7f587d9a8a", "afbdabf23d", "0d398196a8"], "f2": ["51574f9b13"] }]
+    REMOTES = {};
+  </script>
+  <script
+    src="https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/b77cb3b7aec7844f5cae5231385414ce/variables-7dd4b80918af0e0218ec0229e4bd5873.js"
+    defer="defer"></script>
+  <script src="https://du11hjcvx0uqb.cloudfront.net/dist/timezone/Asia/Hong_Kong-031c02e313.js" defer="defer"></script>
+  <script src="https://du11hjcvx0uqb.cloudfront.net/dist/timezone/Asia/Hong_Kong-031c02e313.js" defer="defer"></script>
+  <script src="https://du11hjcvx0uqb.cloudfront.net/dist/timezone/en_US-80a0ce259b.js" defer="defer"></script>
+  <script src="https://du11hjcvx0uqb.cloudfront.net/dist/webpack-production/react-entry-c8c7bdb5b4feb9bd.js"
+    crossorigin="anonymous" defer="defer"></script>
+  <script src="https://du11hjcvx0uqb.cloudfront.net/dist/webpack-production/main-entry-520c4108c2280761.js"
+    crossorigin="anonymous" defer="defer"></script>
+  <script>
+    //<![CDATA[
+    (window.deferredBundles || (window.deferredBundles = [])).push('take_quiz');
+    (window.bundles || (window.bundles = [])).push('navigation_header');
+    //]]>
+  </script>
+
+
+
+</head>
+
+<body
+  class="assessing with-left-side course-menu-expanded with-right-side quizzes primary-nav-expanded full-width context-course_92006 responsive_student_grades_page">
+
+  <noscript>
+    <div role="alert" class="ic-flash-static ic-flash-error">
+      <div class="ic-flash__icon" aria-hidden="true">
+        <i class="icon-warning"></i>
+      </div>
+      <h1>You need to have JavaScript enabled in order to access this site.</h1>
+    </div>
+  </noscript>
+
+
+
+
+  <div id="flash_message_holder"></div>
+  <div id="flash_screenreader_holder"></div>
+
+  <div id="application" class="ic-app">
+
+
+
+
+
+    <header id="mobile-header" class="no-print">
+      <button type="button" class="Button Button--icon-action-rev Button--large mobile-header-hamburger">
+        <i class="icon-solid icon-hamburger"></i>
+        <span id="mobileHeaderInboxUnreadBadge" class="menu-item__badge"
+          style="min-width: 0; top: 12px; height: 12px; right: 6px; display:none;"></span>
+        <span class="screenreader-only">Dashboard</span>
+      </button>
+      <div class="mobile-header-space"></div>
+      <a class="mobile-header-title expandable" href="/courses/92006" role="button"
+        aria-controls="mobileContextNavContainer">
+        <div>Comms_GED0031</div>
+        <div>[F1-FORMATIVE]: First Formative Assessment</div>
+      </a>
+      <div class="mobile-header-space"></div>
+      <button type="button" class="Button Button--icon-action-rev Button--large mobile-header-arrow"
+        aria-label="Navigation Menu">
+        <i class="icon-arrow-open-down" id="mobileHeaderArrowIcon"></i>
+      </button>
+    </header>
+    <nav id="mobileContextNavContainer"></nav>
+
+    <header id="header" class="ic-app-header no-print ">
+      <a href="#content" id="skip_navigation_link">Skip To Content</a>
+      <div role="region" class="ic-app-header__main-navigation" aria-label="Global Navigation">
+        <div class="ic-app-header__logomark-container">
+          <a href="https://feu.instructure.com/" class="ic-app-header__logomark">
+            <span class="screenreader-only">Dashboard</span>
+          </a>
+        </div>
+        <ul id="menu" class="ic-app-header__menu-list">
+          <li class="menu-item ic-app-header__menu-list-item ">
+            <a id="global_nav_profile_link" role="button" href="/profile/settings"
+              class="ic-app-header__menu-list-link">
+              <div class="menu-item-icon-container">
+                <div aria-hidden="true" class="fs-exclude ic-avatar ">
+                  <img
+                    src="https://feu.instructure.com/images/thumbnails/15921206/4kLkmeqYYrfgP2tBz8P3VqFLEPpa8amL9hvEKHrP"
+                    alt="MBPejana" />
+                </div>
+                <span class="menu-item__badge"></span>
+              </div>
+              <div class="menu-item__text">
+                Account
+              </div>
+            </a>
+          </li>
+          <li class="ic-app-header__menu-list-item ">
+            <a id="global_nav_dashboard_link" href="https://feu.instructure.com/" class="ic-app-header__menu-list-link">
+              <div class="menu-item-icon-container" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" class="ic-icon-svg ic-icon-svg--dashboard" version="1.1" x="0"
+                  y="0" viewBox="0 0 280 200" enable-background="new 0 0 280 200" xml:space="preserve">
+                  <path
+                    d="M273.09,180.75H197.47V164.47h62.62A122.16,122.16,0,1,0,17.85,142a124,124,0,0,0,2,22.51H90.18v16.29H6.89l-1.5-6.22A138.51,138.51,0,0,1,1.57,142C1.57,65.64,63.67,3.53,140,3.53S278.43,65.64,278.43,142a137.67,137.67,0,0,1-3.84,32.57ZM66.49,87.63,50.24,71.38,61.75,59.86,78,76.12Zm147,0L202,76.12l16.25-16.25,11.51,11.51ZM131.85,53.82v-23h16.29v23Zm15.63,142.3a31.71,31.71,0,0,1-28-16.81c-6.4-12.08-15.73-72.29-17.54-84.25a8.15,8.15,0,0,1,13.58-7.2c8.88,8.21,53.48,49.72,59.88,61.81a31.61,31.61,0,0,1-27.9,46.45ZM121.81,116.2c4.17,24.56,9.23,50.21,12,55.49A15.35,15.35,0,1,0,161,157.3C158.18,152,139.79,133.44,121.81,116.2Z" />
+                </svg>
+
+              </div>
+              <div class="menu-item__text">
+                Dashboard
+              </div>
+            </a>
+          </li>
+          <li class="menu-item ic-app-header__menu-list-item ic-app-header__menu-list-item--active">
+            <a id="global_nav_courses_link" role="button" href="/courses" class="ic-app-header__menu-list-link">
+              <div class="menu-item-icon-container" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" class="ic-icon-svg ic-icon-svg--courses" version="1.1" x="0"
+                  y="0" viewBox="0 0 280 259" enable-background="new 0 0 280 259" xml:space="preserve">
+                  <path
+                    d="M73.31,198c-11.93,0-22.22,8-24,18.73a26.67,26.67,0,0,0-.3,3.63v.3a22,22,0,0,0,5.44,14.65,22.47,22.47,0,0,0,17.22,8H200V228.19h-134V213.08H200V198Zm21-105.74h90.64V62H94.3ZM79.19,107.34V46.92H200v60.42Zm7.55,30.21V122.45H192.49v15.11ZM71.65,16.71A22.72,22.72,0,0,0,49,39.36V190.88a41.12,41.12,0,0,1,24.32-8h157V16.71ZM33.88,39.36A37.78,37.78,0,0,1,71.65,1.6H245.36V198H215.15v45.32h22.66V258.4H71.65a37.85,37.85,0,0,1-37.76-37.76Z" />
+                </svg>
+
+              </div>
+              <div class="menu-item__text">
+                Courses
+              </div>
+            </a>
+          </li>
+          <li class="menu-item ic-app-header__menu-list-item ">
+            <a id="global_nav_calendar_link" href="/calendar" class="ic-app-header__menu-list-link">
+              <div class="menu-item-icon-container" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" class="ic-icon-svg ic-icon-svg--calendar" version="1.1" x="0"
+                  y="0" viewBox="0 0 280 280" enable-background="new 0 0 280 280" xml:space="preserve">
+                  <path
+                    d="M197.07,213.38h16.31V197.07H197.07Zm-16.31,16.31V180.76h48.92v48.92Zm-48.92-16.31h16.31V197.07H131.85Zm-16.31,16.31V180.76h48.92v48.92ZM66.62,213.38H82.93V197.07H66.62ZM50.32,229.68V180.76H99.24v48.92Zm146.75-81.53h16.31V131.85H197.07Zm-16.31,16.31V115.54h48.92v48.92Zm-48.92-16.31h16.31V131.85H131.85Zm-16.31,16.31V115.54h48.92v48.92ZM66.62,148.15H82.93V131.85H66.62ZM50.32,164.46V115.54H99.24v48.92ZM34,262.29H246V82.93H34ZM246,66.62V42.16A8.17,8.17,0,0,0,237.84,34H213.38v8.15a8.15,8.15,0,1,1-16.31,0V34H82.93v8.15a8.15,8.15,0,0,1-16.31,0V34H42.16A8.17,8.17,0,0,0,34,42.16V66.62Zm-8.15-48.92a24.49,24.49,0,0,1,24.46,24.46V278.6H17.71V42.16A24.49,24.49,0,0,1,42.16,17.71H66.62V9.55a8.15,8.15,0,0,1,16.31,0v8.15H197.07V9.55a8.15,8.15,0,1,1,16.31,0v8.15Z" />
+                </svg>
+
+              </div>
+              <div class="menu-item__text">
+                Calendar
+              </div>
+            </a>
+          </li>
+          <li class="menu-item ic-app-header__menu-list-item ">
+            <!-- TODO: Add back global search when available -->
+            <a id="global_nav_conversations_link" href="/conversations" class="ic-app-header__menu-list-link">
+              <div class="menu-item-icon-container">
+                <span aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" class="ic-icon-svg ic-icon-svg--inbox"
+                    version="1.1" x="0" y="0" viewBox="0 0 280 280" enable-background="new 0 0 280 280"
+                    xml:space="preserve">
+                    <path
+                      d="M91.72,120.75h96.56V104.65H91.72Zm0,48.28h80.47V152.94H91.72Zm0-96.56h80.47V56.37H91.72Zm160.94,34.88H228.52V10.78h-177v96.56H27.34A24.17,24.17,0,0,0,3.2,131.48V244.14a24.17,24.17,0,0,0,24.14,24.14H252.66a24.17,24.17,0,0,0,24.14-24.14V131.48A24.17,24.17,0,0,0,252.66,107.34Zm0,16.09a8.06,8.06,0,0,1,8,8v51.77l-32.19,19.31V123.44ZM67.58,203.91v-177H212.42v177ZM27.34,123.44H51.48v79.13L19.29,183.26V131.48A8.06,8.06,0,0,1,27.34,123.44ZM252.66,252.19H27.34a8.06,8.06,0,0,1-8-8V202l30,18H230.75l30-18v42.12A8.06,8.06,0,0,1,252.66,252.19Z" />
+                  </svg>
+                </span>
+                <span class="menu-item__badge"></span>
+              </div>
+              <div class="menu-item__text">
+                Inbox
+              </div>
+            </a>
+          </li>
+          <li class="menu-item ic-app-header__menu-list-item">
+            <a id="global_nav_history_link" role="button" href="#" class="ic-app-header__menu-list-link">
+              <div class="menu-item-icon-container" aria-hidden="true">
+                <svg viewBox="0 0 1920 1920" class="ic-icon-svg menu-item__icon svg-icon-history" version="1.1"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M960 112.941c-467.125 0-847.059 379.934-847.059 847.059 0 467.125 379.934 847.059 847.059 847.059 467.125 0 847.059-379.934 847.059-847.059 0-467.125-379.934-847.059-847.059-847.059M960 1920C430.645 1920 0 1489.355 0 960S430.645 0 960 0s960 430.645 960 960-430.645 960-960 960m417.905-575.955L903.552 988.28V395.34h112.941v536.47l429.177 321.77-67.765 90.465z"
+                    stroke="none" stroke-width="1" fill-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="menu-item__text">
+                History
+              </div>
+            </a>
+          </li>
+
+          <li id="context_external_tool_8514_menu_item"
+            class="globalNavExternalTool menu-item ic-app-header__menu-list-item">
+            <a class='ic-app-header__menu-list-link'
+              href="/accounts/1/external_tools/8514?launch_type=global_navigation">
+              <svg version="1.1" class="ic-icon-svg ic-icon-svg--lti menu-item__icon" xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 64 64">
+                <path
+                  d="M37.5331419,41.3325083 L25.3997411,41.3325083 L25.3997411,52.8756632 C27.5972597,53.6451225 29.1733531,55.7378472 29.1733531,58.198822 C29.1733531,61.3127847 26.6499049,63.8371501 23.5370738,63.8371501 C20.4242427,63.8371501 17.9007945,61.3127847 17.9007945,58.198822 C17.9007945,55.7378472 19.4768879,53.6451225 21.6744065,52.8756632 L21.6744065,41.3325083 L17.5706263,41.3325083 L17.5717453,47.9192726 C17.5717453,50.4825483 15.4945548,52.5604939 12.9322104,52.5604939 L10.9667199,52.5588751 C10.2051449,54.7710384 8.10625368,56.3604121 5.63627929,56.3604121 C2.52344819,56.3604121 2.84217094e-14,53.8360466 2.84217094e-14,50.722084 C2.84217094e-14,47.6081214 2.52344819,45.0837559 5.63627929,45.0837559 C8.08603407,45.0837559 10.1707563,46.6472143 10.9477485,48.8310912 L12.9905507,48.8310912 C13.4625615,48.8310912 13.8452018,48.4483118 13.8452018,47.9761294 L13.8452018,41.3325083 L5.65400042,41.3325083 C4.57511859,41.3325083 3.70051205,40.4575839 3.70051205,39.3783099 L3.70051205,1.95419847 C3.70051205,0.874924458 4.57511859,-1.42108547e-14 5.65400042,-1.42108547e-14 L57.2376164,-1.42108547e-14 C58.3164983,-1.42108547e-14 59.1911048,0.874924458 59.1911048,1.95419847 L59.1911048,39.3783099 C59.1911048,40.4575839 58.3164983,41.3325083 57.2376164,41.3325083 L49.085452,41.3325083 L49.085452,47.9761294 C49.085452,48.4483118 49.4680923,48.8310912 49.9401031,48.8310912 L51.9829054,48.8310912 C52.7598976,46.6472143 54.8446197,45.0837559 57.2943745,45.0837559 C60.4072056,45.0837559 62.9306538,47.6081214 62.9306538,50.722084 C62.9306538,53.8360466 60.4072056,56.3604121 57.2943745,56.3604121 C54.8244001,56.3604121 52.725509,54.7710384 51.9639339,52.5588751 L49.9996524,52.5604938 C47.436099,52.5604939 45.3589085,50.4825483 45.3589085,47.9192726 L45.3600275,41.3325083 L41.2584765,41.3325083 L41.2584765,52.8756632 C43.4559951,53.6451225 45.0320885,55.7378472 45.0320885,58.198822 C45.0320885,61.3127847 42.5086403,63.8371501 39.3958092,63.8371501 C36.2829781,63.8371501 33.7595299,61.3127847 33.7595299,58.198822 C33.7595299,55.7378472 35.3356233,53.6451225 37.5331419,52.8756632 L37.5331419,41.3325083 Z M39.4407163,60.0484002 C40.4618389,60.0484002 41.2896223,59.2203158 41.2896223,58.198822 C41.2896223,57.1773282 40.4618389,56.3492439 39.4407163,56.3492439 C38.4195937,56.3492439 37.5918102,57.1773282 37.5918102,58.198822 C37.5918102,59.2203158 38.4195937,60.0484002 39.4407163,60.0484002 Z M23.5819809,60.0484002 C24.6031035,60.0484002 25.4308869,59.2203158 25.4308869,58.198822 C25.4308869,57.1773282 24.6031035,56.3492439 23.5819809,56.3492439 C22.5608582,56.3492439 21.7330748,57.1773282 21.7330748,58.198822 C21.7330748,59.2203158 22.5608582,60.0484002 23.5819809,60.0484002 Z M57.3392816,52.5716621 C58.3604042,52.5716621 59.1881877,51.7435778 59.1881877,50.722084 C59.1881877,49.7005902 58.3604042,48.8725058 57.3392816,48.8725058 C56.318159,48.8725058 55.4903755,49.7005902 55.4903755,50.722084 C55.4903755,51.7435778 56.318159,52.5716621 57.3392816,52.5716621 Z M5.59137222,52.5716621 C6.61249484,52.5716621 7.44027829,51.7435778 7.44027829,50.722084 C7.44027829,49.7005902 6.61249484,48.8725058 5.59137222,48.8725058 C4.57024959,48.8725058 3.74246615,49.7005902 3.74246615,50.722084 C3.74246615,51.7435778 4.57024959,52.5716621 5.59137222,52.5716621 Z M30.1554353,12.9293586 L35.7525093,16.2831044 C36.070684,16.5163802 36.2591714,16.8906762 36.2591714,17.2892282 C36.2591714,17.6877801 36.070684,18.0620761 35.7525093,18.2953519 L30.1554353,21.6490977 C29.7776345,21.8706324 29.3121961,21.8707698 28.9342686,21.6494581 C28.5563411,21.4281465 28.3232712,21.0189676 28.3227651,20.575899 L28.3227651,14.0025573 C28.3232712,13.5594887 28.5563411,13.1503099 28.9342686,12.9289982 C29.3121961,12.7076865 29.7776345,12.7078239 30.1554353,12.9293586 Z M55.6445081,31.031948 L55.6445081,4.52360758 C55.6445081,3.98397057 55.2072048,3.54650834 54.6677639,3.54650834 L8.22385298,3.54650834 C7.68441206,3.54650834 7.24710879,3.98397057 7.24710879,4.52360758 L7.24710879,31.031948 L55.6445081,31.031948 Z M55.6445081,34.5784563 L7.24710879,34.5784563 L7.24710879,36.8093831 C7.24710879,37.3490201 7.68441206,37.7864824 8.22385298,37.7864824 L54.6677639,37.7864824 C55.2072048,37.7864824 55.6445081,37.3490201 55.6445081,36.8093831 L55.6445081,34.5784563 Z" />
+              </svg>
+              <div class="menu-item__text">
+                Studio
+              </div>
+            </a>
+          </li>
+
+          <li class="ic-app-header__menu-list-item">
+            <a id="global_nav_help_link" role="button" class="ic-app-header__menu-list-link"
+              data-track-category="help system" data-track-label="help button" href="https://help.instructure.com">
+              <div class="menu-item-icon-container" role="presentation">
+                <svg xmlns="http://www.w3.org/2000/svg" class="ic-icon-svg menu-item__icon svg-icon-help" version="1.1"
+                  x="0" y="0" viewBox="0 0 200 200" enable-background="new 0 0 200 200" xml:space="preserve"
+                  fill="currentColor">
+                  <path
+                    d="M100,127.88A11.15,11.15,0,1,0,111.16,139,11.16,11.16,0,0,0,100,127.88Zm8.82-88.08a33.19,33.19,0,0,1,23.5,23.5,33.54,33.54,0,0,1-24,41.23,3.4,3.4,0,0,0-2.74,3.15v9.06H94.42v-9.06a14.57,14.57,0,0,1,11.13-14,22.43,22.43,0,0,0,13.66-10.27,22.73,22.73,0,0,0,2.31-17.37A21.92,21.92,0,0,0,106,50.59a22.67,22.67,0,0,0-19.68,3.88,22.18,22.18,0,0,0-8.65,17.64H66.54a33.25,33.25,0,0,1,13-26.47A33.72,33.72,0,0,1,108.82,39.8ZM100,5.2A94.8,94.8,0,1,0,194.8,100,94.91,94.91,0,0,0,100,5.2m0,178.45A83.65,83.65,0,1,1,183.65,100,83.73,83.73,0,0,1,100,183.65"
+                    transform="translate(-5.2 -5.2)" />
+                </svg>
+
+                <span class="menu-item__badge"></span>
+              </div>
+              <div class="menu-item__text">
+                Help
+              </div>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="ic-app-header__secondary-navigation">
+        <ul class="ic-app-header__menu-list">
+          <li class="menu-item ic-app-header__menu-list-item">
+            <a id="primaryNavToggle" role="button" href="#"
+              class="ic-app-header__menu-list-link ic-app-header__menu-list-link--nav-toggle"
+              aria-label="Minimize global navigation" title="Minimize global navigation">
+              <div class="menu-item-icon-container" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" class="ic-icon-svg ic-icon-svg--navtoggle" version="1.1" x="0"
+                  y="0" width="40" height="32" viewBox="0 0 40 32" xml:space="preserve">
+                  <path
+                    d="M39.5,30.28V2.48H37.18v27.8Zm-4.93-13.9L22.17,4,20.53,5.61l9.61,9.61H.5v2.31H30.14l-9.61,9.61,1.64,1.64Z" />
+                </svg>
+
+              </div>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div id="global_nav_tray_container"></div>
+      <div id="global_nav_tour"></div>
+    </header>
+
+
+    <div id="instructure_ajax_error_box">
+      <div style="text-align: right; background-color: #fff;"><a href="#"
+          class="close_instructure_ajax_error_box_link">Close</a></div>
+      <iframe id="instructure_ajax_error_result" src="about:blank" style="border: 0;" title="Error"></iframe>
+    </div>
+
+    <div id="wrapper" class="ic-Layout-wrapper">
+      <div class="ic-app-nav-toggle-and-crumbs no-print">
+        <button type="button" id="courseMenuToggle" class="Button Button--link ic-app-course-nav-toggle"
+          aria-live="polite" aria-label="Hide Courses Navigation Menu">
+          <i class="icon-hamburger" aria-hidden="true"></i>
+        </button>
+
+        <div class="ic-app-crumbs ">
+          <nav id="breadcrumbs" role="navigation" aria-label="breadcrumbs">
+            <ul>
+              <li class="home"><a href="/"><span class="ellipsible"><i class="icon-home" title="My Dashboard">
+                      <span class="screenreader-only">My Dashboard</span>
+                    </i>
+                  </span></a></li>
+              <li><a href="/courses/92006"><span class="ellipsible">Comms_GED0031</span></a></li>
+              <li><a href="/courses/92006/quizzes"><span class="ellipsible">Quizzes</span></a></li>
+              <li><a href="/courses/92006/quizzes/1168826"><span class="ellipsible">[F1-FORMATIVE]: First Formative
+                    Assessment</span></a></li>
+            </ul>
+          </nav>
+        </div>
+
+
+        <div class="right-of-crumbs">
+          <div class="TutorialToggleHolder"></div>
+        </div>
+
+      </div>
+      <div id="main" class="ic-Layout-columns">
+        <div class="ic-Layout-watermark"></div>
+        <div id="left-side" class="ic-app-course-menu ic-sticky-on list-view" style="display: block">
+          <div id="sticky-container" class="ic-sticky-frame">
+            <span id="section-tabs-header-subtitle" class="ellipsis">School Year 2023-2024 3rd Trimester MILES
+              Official</span>
+            <nav role="navigation" aria-label="Courses Navigation Menu">
+              <ul id="section-tabs">
+                <li class="section"><a href="/courses/92006" class="home">Home</a></li>
+                <li class="section"><a href="/courses/92006/announcements" class="announcements">Announcements</a></li>
+                <li class="section"><a href="/courses/92006/modules" class="modules">Modules</a></li>
+                <li class="section"><a href="/courses/92006/assignments" class="assignments">Assignments</a></li>
+                <li class="section"><a href="/courses/92006/assignments/syllabus" class="syllabus">Syllabus</a></li>
+                <li class="section"><a href="/courses/92006/discussion_topics" class="discussions">Discussions</a></li>
+                <li class="section"><a href="/courses/92006/users" class="people">People</a></li>
+                <li class="section"><a href="/courses/92006/external_tools/9232"
+                    class="context_external_tool_9232">M-Flix</a></li>
+                <li class="section"><a href="/courses/92006/external_tools/6317"
+                    class="context_external_tool_6317">Incentives</a></li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+        <div id="not_right_side" class="ic-app-main-content">
+          <div id="content-wrapper" class="ic-Layout-contentWrapper">
+
+            <div id="content" class="ic-Layout-contentMain" role="main">
+
+
+
+
+              <h3 class="loading">Loading...</h3>
+              <div class="loaded" style="display:none">
+                <header class="quiz-header">
+                  <h1>[F1-FORMATIVE]: First Formative Assessment</h1>
+                  Started:
+                  Jun 6 at 2:54pm
+                  <h2>Quiz Instructions</h2>
+                  <div id="quiz-instructions" class="user_content">
+                    <p>Good day,&nbsp;<br><br>You have been allocated <strong>ten (10)</strong> chances to complete this
+                      <strong>formative assessmen</strong>t.</p>
+                    <p>Only upon achieving a mastery score of <strong>at least 80%</strong> will you be eligible to
+                      progress to the subsequent module.</p>
+                    <p>&nbsp;</p>
+                    <p>Your diligence and dedication are sincerely appreciated.</p>
+                    <p>&nbsp;</p>
+                    <p>Best Regards,</p>
+                    <p>HSC Department</p>
+                  </div>
+
+                  <div class="screenreader-only" role="note">
+                    Note: this is a timed quiz. You may check the remaining time you have at any point while taking the
+                    quiz by pressing the keyboard combination SHIFT, ALT, and T... Again: SHIFT, ALT, and T...
+                  </div>
+                </header>
+
+
+                <form id="submit_quiz_form" class="one_question_at_a_time cant_go_back"
+                  action="/courses/92006/quizzes/1168826/submissions/10467922/record_answer?next_question_path=%2Fcourses%2F92006%2Fquizzes%2F1168826%2Ftake%2Fquestions%2F14874011&amp;user_id=153047"
+                  accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="&#x2713;"
+                    autocomplete="off" /><input type="hidden" name="authenticity_token"
+                    value="CqxcBrT7aG12vRKBwLJmSvAEg0AWpN+B+8uiSfahPXNeyDRn/Ik7IDDFdvGZ0R8Gu07OMkTTs8fJm/orzsl2Ig=="
+                    autocomplete="off" />
+
+                  <div id="questions" class="assessing">
+                    <input type="hidden" name="attempt" value="9" />
+                    <input type="hidden" name="validation_token"
+                      value="fb1a0128b1b355b4943a8380ce9ea750dfdf86299754fdd86cfab20dc44f2749" />
+                    <div style="display: none;" id="quiz_urls">
+                      <a href="/courses/92006/quizzes/1168826/submissions/backup?user_id=153047"
+                        class="backup_quiz_submission_url">&nbsp;</a>
+                      <span class="started_at">2024-06-06T14:54:24+08:00</span>
+                      <span class="now">2024-06-06T14:59:30+08:00</span>
+                      <span class="end_at">2024-06-06T15:09:24+08:00</span>
+                      <span class="end_at_without_time_limit">2024-08-09T00:00:00+08:00</span>
+                      <span class="due_at"></span>
+                      <span class="time_limit">15</span>
+                      <span class="timer_autosubmit_disabled">false</span>
+                      <span class="time_left">594</span>
+                    </div>
+
+
+                    <div role="region" aria-label="Question" class="quiz_sortable question_holder " id="" style=""
+                      data-group-id="">
+                      <div style="display: block; height: 1px; overflow: hidden;">&nbsp;</div>
+                      <a name="question_14878038"></a>
+                      <div class="display_question question multiple_choice_question     " id="question_14878038">
+
+                        <div class="move">
+                          <a tabindex="0" class="draggable-handle" role="button">
+                            <i class="icon-drag-handle">
+                              <span class="screenreader-only">Move To...</span>
+                              <span class="accessibility-warning screenreader-only">
+                                This element is a more accessible alternative to drag &amp; drop reordering. Press Enter
+                                or Space to move this question.
+                              </span>
+                            </i>
+                          </a>
+                        </div>
+
+
+                        <div class="header">
+                          <span class="name question_name" role="heading" aria-level="2">Question 1</span>
+                          <span class="question_points_holder" style="">
+                            <span class="points question_points">1</span> pts
+                          </span>
+                        </div>
+                        <div class="links" style="display: none;">
+                          <a href="#" class="edit_question_link no-hover" title="Edit this Question"><i
+                              class="icon-edit standalone-icon"><span class="screenreader-only">Edit this
+                                Question</span></i></a>
+                          <a href="#" class="delete_question_link no-hover" title="Delete this Question"><i
+                              class="icon-end standalone-icon"><span class="screenreader-only">Delete this
+                                Question</span></i></a>
+                        </div>
+                        <div style="display: none;">
+                          <span class="regrade_option"></span>
+                          <span class="regrade_disabled">0</span>
+                          <span class="question_type">multiple_choice_question</span>
+                          <span class="answer_selection_type"></span>
+                          <a href="/courses/92006/quizzes/1168826/questions/14878038"
+                            class="update_question_url">&nbsp;</a>
+                          <span class="assessment_question_id">21617534</span>
+                        </div>
+                        <div class="text">
+                          <div class="original_question_text" style="display: none;">
+                            <textarea disabled style="display: none;" name="text_after_answers"
+                              class="textarea_text_after_answers"></textarea>
+                            <textarea disabled style="display: none;" name="question_text"
+                              class="textarea_question_text">&lt;p&gt;&lt;em&gt;Choose the best answer from the choices provided.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Which of the following is a description of communication?&lt;/strong&gt;&lt;/p&gt;</textarea>
+                          </div>
+                          <div id="question_14878038_question_text" class="question_text user_content">
+                            <p><em>Choose the best answer from the choices provided.</em></p>
+                            <p><strong>Which of the following is a description of communication?</strong></p>
+                          </div>
+                          <div class="answers">
+                            <fieldset>
+                              <legend class="screenreader-only">
+                                Group of answer choices
+                              </legend>
+
+                              <div class="answer">
+                                <label class="answer_row user_content">
+                                  <span class="answer_input">
+                                    <input type="radio" class="question_input" name="question_14878038" value="1552"
+                                      id="question_14878038_answer_1552"
+                                      aria-labelledby="question_14878038_answer_1552_label" />
+                                  </span>
+                                  <div class="answer_label" id="question_14878038_answer_1552_label">
+                                    has uniformity no matter who the communicator is
+                                  </div>
+                                </label>
+                              </div>
+
+                              <div class="answer">
+                                <label class="answer_row user_content">
+                                  <span class="answer_input">
+                                    <input type="radio" checked class="question_input" name="question_14878038"
+                                      value="9155" id="question_14878038_answer_9155"
+                                      aria-labelledby="question_14878038_answer_9155_label" />
+                                  </span>
+                                  <div class="answer_label" id="question_14878038_answer_9155_label">
+                                    is evolving and ever-changing
+                                  </div>
+                                </label>
+                              </div>
+
+                              <div class="answer">
+                                <label class="answer_row user_content">
+                                  <span class="answer_input">
+                                    <input type="radio" class="question_input" name="question_14878038" value="2599"
+                                      id="question_14878038_answer_2599"
+                                      aria-labelledby="question_14878038_answer_2599_label" />
+                                  </span>
+                                  <div class="answer_label" id="question_14878038_answer_2599_label">
+                                    involves absolute number of words
+                                  </div>
+                                </label>
+                              </div>
+
+                              <div class="answer">
+                                <label class="answer_row user_content">
+                                  <span class="answer_input">
+                                    <input type="radio" class="question_input" name="question_14878038" value="9673"
+                                      id="question_14878038_answer_9673"
+                                      aria-labelledby="question_14878038_answer_9673_label" />
+                                  </span>
+                                  <div class="answer_label" id="question_14878038_answer_9673_label">
+                                    comes from a single source
+                                  </div>
+                                </label>
+                              </div>
+
+                            </fieldset>
+                          </div>
+                          <div class="after_answers">
+                          </div>
+                        </div>
+                        <div class="clear"></div>
+                      </div>
+                    </div>
+
+
+                    <div class="button-container clearfix">
+
+                      <input type="hidden" name="last_question_id" id="last_question_id" value="14878038"
+                        autocomplete="off" />
+
+                      <button type="submit" class="Button submit_button  next-question"
+                        data-action="/courses/92006/quizzes/1168826/submissions/10467922/record_answer?next_question_path=%2Fcourses%2F92006%2Fquizzes%2F1168826%2Ftake%2Fquestions%2F14874011&amp;user_id=153047"
+                        aria-label="Next Question" disabled>
+                        Next
+                        <i class="icon-mini-arrow-right"></i>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div style="font-size: 1.2em; display: none;" id="times_up_dialog">
+                    Time&#39;s Up! Submitting results in:
+                    <div style="text-align: center; font-size: 1.2em; margin: 10px;" class="countdown_seconds"></div>
+                    <div class="button-container">
+                      <button type="submit" class="submit_quiz_button btn quiz_submit">
+                        Ok, fine
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class=form-actions>
+                    <span id="last_saved_indicator">Not saved</span>
+                    <button type="submit" class="btn submit_button quiz_submit btn-secondary" id="submit_quiz_button"
+                      data-action="/courses/92006/quizzes/1168826/submissions?user_id=153047">
+                      Submit Quiz
+                    </button>
+                  </div>
+
+                </form>
+                <form id="deauthorized_dialog" class="hide" title="Login Required"
+                  action="/courses/92006/quizzes/1168826" method="get">
+                  <div class="text-center">
+                    <strong>You have been logged out of canvas.</strong><br /> To continue please log in
+                  </div>
+                </form>
+              </div>
+
+            </div>
+          </div>
+          <div id="right-side-wrapper" class="ic-app-main-content__secondary">
+            <aside id="right-side" role="complementary">
+
+              <div>
+
+
+                <h3 style="margin: 0px;">Questions</h3>
+                <ul id="question_list" style="max-height: 200px; overflow: auto;" class="read_only">
+
+                  <li id="list_question_14878038" class="list_question answered seen current_question">
+                    <span>
+                      <i class="placeholder icon-check"><span
+                          class="screenreader-only icon-text">Answered</span></i>Question 1
+                      <span class="screenreader-only marked-status"></span>
+                      <span>
+
+                  </li>
+
+                  <li id="list_question_14874011" class="list_question">
+                    <span>
+                      <i class="placeholder icon-question"><span class="screenreader-only icon-text">Haven&#39;t
+                          Answered Yet</span></i>Question 2
+                      <span class="screenreader-only marked-status"></span>
+                      <span>
+
+                  </li>
+
+                  <li id="list_question_14901251" class="list_question">
+                    <span>
+                      <i class="placeholder icon-question"><span class="screenreader-only icon-text">Haven&#39;t
+                          Answered Yet</span></i>Question 3
+                      <span class="screenreader-only marked-status"></span>
+                      <span>
+
+                  </li>
+
+                  <li id="list_question_14874014" class="list_question">
+                    <span>
+                      <i class="placeholder icon-question"><span class="screenreader-only icon-text">Haven&#39;t
+                          Answered Yet</span></i>Question 4
+                      <span class="screenreader-only marked-status"></span>
+                      <span>
+
+                  </li>
+
+                  <li id="list_question_14878042" class="list_question">
+                    <span>
+                      <i class="placeholder icon-question"><span class="screenreader-only icon-text">Haven&#39;t
+                          Answered Yet</span></i>Question 5
+                      <span class="screenreader-only marked-status"></span>
+                      <span>
+
+                  </li>
+
+                  <li id="list_question_14892517" class="list_question">
+                    <span>
+                      <i class="placeholder icon-question"><span class="screenreader-only icon-text">Haven&#39;t
+                          Answered Yet</span></i>Question 6
+                      <span class="screenreader-only marked-status"></span>
+                      <span>
+
+                  </li>
+
+                  <li id="list_question_14892518" class="list_question">
+                    <span>
+                      <i class="placeholder icon-question"><span class="screenreader-only icon-text">Haven&#39;t
+                          Answered Yet</span></i>Question 7
+                      <span class="screenreader-only marked-status"></span>
+                      <span>
+
+                  </li>
+
+                  <li id="list_question_14893968" class="list_question">
+                    <span>
+                      <i class="placeholder icon-question"><span class="screenreader-only icon-text">Haven&#39;t
+                          Answered Yet</span></i>Question 8
+                      <span class="screenreader-only marked-status"></span>
+                      <span>
+
+                  </li>
+
+                  <li id="list_question_14893969" class="list_question">
+                    <span>
+                      <i class="placeholder icon-question"><span class="screenreader-only icon-text">Haven&#39;t
+                          Answered Yet</span></i>Question 9
+                      <span class="screenreader-only marked-status"></span>
+                      <span>
+
+                  </li>
+
+                  <li id="list_question_14878777" class="list_question">
+                    <span>
+                      <i class="placeholder icon-question"><span class="screenreader-only icon-text">Haven&#39;t
+                          Answered Yet</span></i>Question 10
+                      <span class="screenreader-only marked-status"></span>
+                      <span>
+
+                  </li>
+                </ul>
+
+
+                <div id="quiz-time-elapsed">
+                  <div style="display: flex; align-items: center;">
+                    <span class="time_header">
+                      Time Running:
+                    </span>
+                    <span style="padding-left: 10px;">
+                      <a style="font-size: 0.8em; padding: 3px 6px" href="#" class="btn hide_time_link">Hide Time</a>
+                    </span>
+                  </div>
+                  <div class="clear"></div>
+                  <div class="time_running"></div>
+                </div>
+              </div>
+
+
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+    <div style="display:none;"><!-- Everything inside of this should always stay hidden -->
+      <div id="page_view_id">05593bd7-4ccb-483c-8d58-93034db5301e</div>
+    </div>
+    <div id='aria_alerts' class='hide-text affix' role="alert" aria-live="assertive"></div>
+    <div id='StudentTray__Container'></div>
+    <div class="NewUserTutorialTray__Container"></div>
+    <div id="react-router-portals"></div>
+
+
+    <iframe
+      src="https://sso.canvaslms.com/post_message_forwarding?rev=59677caad5-09bb3c9388a5ba3a&amp;token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJwYXJlbnRfZG9tYWluIjoiZmV1Lmluc3RydWN0dXJlLmNvbSJ9.MZpAdGNYtIwPMez5X-C7R5wetVe-W-bAO6wVB4Bgb7ikUpQp1HMHRUXariQf0F0vziFoENDEptAISUl0Huv9vQ"
+      name="post_message_forwarding" title="post_message_forwarding" id="post_message_forwarding"
+      sandbox="allow-scripts allow-same-origin" style="display:none;"></iframe>
+
+
+    <script>
+      Object.assign(
+        ENV,
+        {}
+      )
+    </script>
+
+    <script>
+        //<![CDATA[
+        (window.bundles || (window.bundles = [])).push('inst_fs_service_worker');
+      //]]>
+    </script>
+    <script
+      src="https://instructure-uploads-apse1.s3.ap-southeast-1.amazonaws.com/account_98220000000000001/attachments/15906867/mbg-javascript.js"
+      defer="defer"></script>
+    <script
+      src="https://instructure-uploads-apse1.s3.ap-southeast-1.amazonaws.com/account_98220000000000001/attachments/14128080/addon_miles_tertiary.js"
+      defer="defer"></script>
+
+  </div> <!-- #application -->
+</body>
+
+</html>

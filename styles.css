@@ -1,0 +1,57 @@
+html{
+    --clr-accent: #bd1430;
+    --clr-accent-light: #ff001e;
+    --clr-background: #2b2d42;
+    --clr-background-light: #3d3f59;
+    --clr-text: #edf2f4;
+    color: var(--clr-text);
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--clr-background);
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    width: 200px;
+  }
+
+h1{
+    font-family: 'Libre Barcode 128 Text', monospace;
+    font-size: 3rem;
+    background-color: var(--clr-text);
+    color: var(--clr-background);
+    padding: 0.4rem 1rem;
+    text-align: center;
+    border-radius: 5px;
+    margin: 0;
+    margin-bottom: 1rem;
+}
+
+.content-wrapper{
+    border-radius: 6px;
+    background-color: var(--clr-background-light);
+    padding: 0.9rem;
+    display: flex;
+    flex-direction: column;
+}
+
+  input[type="text"] {
+    display: block;
+    margin: 10px 0;
+    padding: 5px;
+    border-radius: 5px;
+    border: 0;
+  }
+  button {
+    justify-self: center;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  button:hover {
+    background-color: #45a049;
+  }
