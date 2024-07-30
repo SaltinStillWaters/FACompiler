@@ -1,0 +1,29 @@
+{
+    "manifest_version": 3,
+    "name": "FACompiler",
+    "version": "0.1.0",
+    "description": "An extension that works with Canvas Loader to extract FA questions and insert them in excel",
+
+    "permissions": [
+        "activeTab",
+        "storage",
+        "tabs",
+        "scripting"
+    ],
+
+    "action": {
+        "default_popup": "popup/popup.html",
+        "default_icon": "images/icon.png"
+    },
+    
+    "background": {
+        "service_worker": "background.js"
+    },
+
+    "content_scripts": [
+        {
+            "matches": ["https://feu.instructure.com/courses/*/take"],
+            "js": ["scripts/init.js"]
+        }
+    ]
+}
