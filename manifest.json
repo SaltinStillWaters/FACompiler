@@ -22,8 +22,12 @@
 
     "content_scripts": [
         {
-            "matches": ["https://feu.instructure.com/courses/*/take", "https://feu.instructure.com/courses/*/questions/*"],
-            "js": ["scripts/init.js", "scripts/process.js"]
+            "matches": ["https://feu.instructure.com/courses/*/take"],
+            "js": ["scripts/init.js"]
+        },
+        {
+            "matches": ["https://feu.instructure.com/courses/*/questions/*"],
+            "js": ["scripts/process.js"]
         }
     ]
 }

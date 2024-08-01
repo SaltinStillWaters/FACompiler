@@ -1,14 +1,10 @@
-storeDataLocal('courseID', getCourseID());
-getDataLocal('courseID', function(val) {
-    if (val) {
-        console.log('Course ID is ' + val);
-    } else {
-        console.log('No Course ID found');
-    }
-});
+updateDataLocal();
 
-getFANumber();
-let currURL = window.location.href;
+function updateDataLocal() {
+    storeDataLocal('courseID', getCourseID());
+    storeDataLocal('FANumber', getFANumber());
+    storeDataLocal('currURL', window.location.href);
+}
 
 function getCourseID() {
     let currURL = window.location.href;
@@ -24,10 +20,11 @@ function getFANumber() {
 function storeDataLocal(key, val) {
     chrome.storage.local.set({[key] : val}, function() {
         console.log('key: ' + key + ', val: ' + val + ' is set');
+        console.log('init.js is running at', new Date().toLocaleString());
     });
 }
 
-function getDataLocal(key, callback) {
+function retrieveDataLocal(key, callback) {
     chrome.storage.local.get([key], function(result) {
         if (result[key]) {
             console.log('val of key: ' + key + ' is: ' + result[key]);
