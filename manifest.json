@@ -8,7 +8,8 @@
         "activeTab",
         "storage",
         "tabs",
-        "scripting"
+        "scripting",
+        "identity"
     ],
 
     "action": {
@@ -20,14 +21,17 @@
         "service_worker": "background.js"
     },
 
+    "oauth2": {
+        "client_id": "577911638183-0h83q92rpudsfip6hvgs0prt8o6jb82t.apps.googleusercontent.com",
+        "scopes": [
+            "https://www.googleapis.com/auth/spreadsheets.readonly"
+        ]
+    },
+
     "content_scripts": [
         {
-            "matches": ["https://feu.instructure.com/courses/*/take"],
-            "js": ["scripts/init.js"]
-        },
-        {
-            "matches": ["https://feu.instructure.com/courses/*/questions/*"],
-            "js": ["scripts/process.js"]
+            "matches": ["https://feu.instructure.com/courses/*/take*"],
+            "js": ["scripts/main.js"]
         }
     ]
 }
