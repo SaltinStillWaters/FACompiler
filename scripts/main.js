@@ -1,4 +1,6 @@
 const keys = ['currURL', 'FANumber', 'courseID', 'questionID'];
+let creds;
+const spreadsheetID = '1Nt9_t6cTjv-J7Ej9q-b9NK8aETeB0OxEkr4eFGz_D4I';
 
 chrome.storage.local.get(keys)
 .then((response) =>
@@ -28,12 +30,52 @@ chrome.storage.local.get(keys)
 })
 .then((response) =>
 {
-    console.log(response);
+    creds = response;
+    console.log('SHEET NAME: ', response['FANumber']);
+
+    return checkSheetExists(spreadsheetID, response['FANumber']);
+})
+.then(exists =>
+{
+    console.log(exists);
+    if (exists)
+    {
+        console.log('SHEET EXISTS');
+    }
+    else
+    {
+        console.log('SHEET NOT EXISTSSSS');
+    }
 })
 .catch((error) =>
 {
     console.error(error);
 });
+
+function checkSheetExists(spreadsheetID, sheetName)
+{
+    return new Promise((resolve, reject) =>
+    {
+        chrome.runtime.sendMessage(
+            {
+                action: 'checkSheetExists',
+                spreadsheetID: spreadsheetID,
+                sheetName: sheetName
+            },
+            response =>
+            {
+                console.log('bg script response: ', response);
+                if (response.error)
+                {
+                    reject(response.error);
+                }
+                else
+                {
+                    resolve(response.exists);
+                }
+            });
+    });
+}
 
 //EXTRACT
 function getVals()
