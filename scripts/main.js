@@ -7,7 +7,7 @@ chrome.storage.local.get(keys)
 {
     if (response['currURL'] !== getCleanedURL())
     {
-        console.log('Local needs update');
+        console.log('Local Data needs update...');
 
         let vals = getVals();
 
@@ -20,7 +20,7 @@ chrome.storage.local.get(keys)
         return chrome.storage.local.set(keyVal)
         .then(() =>
         {
-            console.log('Local updated');
+            console.log('...Local Data updated');
         })
     }
 })
@@ -31,49 +31,80 @@ chrome.storage.local.get(keys)
 .then((response) =>
 {
     creds = response;
-    console.log('SHEET NAME: ', response['FANumber']);
-
     return checkSheetExists(spreadsheetID, response['FANumber']);
 })
 .then(exists =>
 {
     if (exists)
     {
-        console.log('SHEET EXISTS');
+        console.log('Sheet: ', creds['FANumber'], ' exists');
     }
     else
     {
-        console.log('SHEET NOT EXISTSSSS');
+        console.log('Sheet: ', creds['FANumber'], ' does not exist');
+        console.log('Creating sheet: ', creds['FANumber'], '...');
+        return createSheet(spreadsheetID, creds['FANumber']);
     }
 })
+.then(newSheet =>
+{
+    if (newSheet)
+    {
+        console.log('Sheet: ', creds['FANumber'], ' created: ', );
+    }
+}
+)
 .catch((error) =>
 {
     console.error(error);
 });
 
 
+function createSheet(spreadsheetID, sheetName)
+{
+    return new Promise((resolve, reject) =>
+    {
+        chrome.runtime.sendMessage(
+        {
+            action: 'createSheet',
+            spreadsheetID: spreadsheetID,
+            sheetName: sheetName
+        },
+        response =>
+        {
+            if (response.error)
+            {
+                reject(response.error);
+            }
+            else
+            {
+                resolve(response.result);
+            }
+        });
+    });
+}
 
 function checkSheetExists(spreadsheetID, sheetName)
 {
     return new Promise((resolve, reject) =>
     {
         chrome.runtime.sendMessage(
-            {
+        {
                 action: 'checkSheetExists',
                 spreadsheetID: spreadsheetID,
                 sheetName: sheetName
-            },
-            response =>
+        },
+        response =>
+        {
+            if (response.error)
             {
-                if (response.error)
-                {
-                    reject(response.error);
-                }
-                else
-                {
-                    resolve(response.exists);
-                }
-            });
+                reject(response.error);
+            }
+            else
+            {
+                resolve(response.exists);
+            }
+        });
     });
 }
 

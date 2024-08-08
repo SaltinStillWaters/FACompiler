@@ -25,6 +25,7 @@
     "oauth2": {
         "client_id": "577911638183-0h83q92rpudsfip6hvgs0prt8o6jb82t.apps.googleusercontent.com",
         "scopes": [
+            "https://www.googleapis.com/auth/spreadsheets",
             "https://www.googleapis.com/auth/spreadsheets.readonly"
         ]
     },
