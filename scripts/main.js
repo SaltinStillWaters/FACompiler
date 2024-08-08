@@ -37,7 +37,6 @@ chrome.storage.local.get(keys)
 })
 .then(exists =>
 {
-    console.log(exists);
     if (exists)
     {
         console.log('SHEET EXISTS');
@@ -52,6 +51,8 @@ chrome.storage.local.get(keys)
     console.error(error);
 });
 
+
+
 function checkSheetExists(spreadsheetID, sheetName)
 {
     return new Promise((resolve, reject) =>
@@ -64,7 +65,6 @@ function checkSheetExists(spreadsheetID, sheetName)
             },
             response =>
             {
-                console.log('bg script response: ', response);
                 if (response.error)
                 {
                     reject(response.error);
