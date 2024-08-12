@@ -1,4 +1,4 @@
-const keys = ['currURL', 'FANumber', 'courseID', 'questionID'];
+const keys = ['currURL', 'FANumber', 'courseID', 'FAID', 'questionID'];
 let creds;
 const spreadsheetID = '1Nt9_t6cTjv-J7Ej9q-b9NK8aETeB0OxEkr4eFGz_D4I';
 
@@ -9,12 +9,12 @@ chrome.storage.local.get(keys)
     {
         console.log('Local Data needs update...');
 
-        let vals = getVals();
+        let values = getvalues();
 
         let keyVal = {};
         keys.forEach((key, index) =>
         {
-            keyVal[key] = vals[index];
+            keyVal[key] = values[index];
         })
         
         return chrome.storage.local.set(keyVal)
@@ -51,6 +51,32 @@ chrome.storage.local.get(keys)
     if (newSheet)
     {
         console.log('Sheet: ', creds['FANumber'], ' created: ', );
+        initSheet(spreadsheetID, creds['FANumber'])
+    }
+}
+)
+.then(response =>
+{
+    if (response)
+    {
+        console.log('Sheet successfully initialized: ', response);
+    }
+}
+)
+.then(() =>
+    {
+        return(readFromSheet(spreadsheetID, 'Info', 'A1'));   
+    }
+)
+.then(result =>
+{
+    if (result)
+    {
+        console.log('Output: ', result);
+    }
+    else
+    {
+        console.log('No output');
     }
 }
 )
@@ -59,6 +85,66 @@ chrome.storage.local.get(keys)
     console.error(error);
 });
 
+function getFASheetName(spreadsheetID, FAID)
+{
+    
+}
+
+function readFromSheet(spreadsheetID, sheetName, range)
+{
+    return new Promise((resolve, reject) =>
+    {
+        chrome.runtime.sendMessage(
+            {
+                action: 'readFromSheet',
+                spreadsheetID: spreadsheetID,
+                sheetName: sheetName,
+                range: range
+            },
+            response =>
+            {
+                if (response.error)
+                {
+                    reject(response.error);
+                }
+                else
+                {
+                    resolve(response.result);
+                }
+            });
+    });
+}
+
+function initSheet(spreadsheetID, sheetName)
+{
+    return writeToSheet(spreadsheetID, sheetName, 'A1:G1', [['QUESTIONS', 'CHOICES', 'ANSWERS', 'WRONG ANSWERS', null , 'TOTAL QUESTIONS:', 0]]);
+}
+
+function writeToSheet(spreadsheetID, sheetName, range, values)
+{
+    return new Promise((resolve, reject) =>
+    {
+        chrome.runtime.sendMessage(
+            {
+                action: 'writeToSheet',
+                spreadsheetID: spreadsheetID,
+                sheetName: sheetName,
+                range: range,
+                values: values
+            },
+            response =>
+            {
+                if (response.error)
+                {
+                    reject(response.error);
+                }
+                else
+                {
+                    resolve(response.result);
+                }
+            });
+    });
+}
 
 function createSheet(spreadsheetID, sheetName)
 {
@@ -109,16 +195,16 @@ function checkSheetExists(spreadsheetID, sheetName)
 }
 
 //EXTRACT
-function getVals()
+function getvalues()
 {
     try
     {
-        let vals =  [getCleanedURL(), getFANumber(), getCourseID(), getQuestionID()];
-        return vals;
+        let values =  [getCleanedURL(), getFANumber(), getCourseID(), getFAID(), getQuestionID()];
+        return values;
     }
     catch (error)
     {
-        console.error('Error in getVals(): ', error);
+        console.error('Error in getvalues(): ', error);
         return null;
     }
 }
@@ -173,6 +259,23 @@ function getCourseID()
     }
 
     return splitUrl[0];
+}
+
+function getFAID()
+{
+    let splitURL = window.location.href.split('quizzes/');
+    if (splitURL.length < 2)
+    {
+        throw new Error("URL does not contain 'quizzes/'");
+    }
+    
+    splitURL = splitURL[1].split('/');
+    if (splitURL.length < 2)
+    {
+        throw new Error("URL does not contain '/'");
+    }
+
+    return splitURL[0];
 }
 
 function getQuestionID()

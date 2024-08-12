@@ -34,9 +34,103 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) =>
 
     return true;
   }
+  else if (request.action === 'writeToSheet')
+  {
+    getAuthToken()
+    .then(token => writeToSheet(token, request.spreadsheetID, request.sheetName, request.range, request.values))
+    .then(response =>
+    {
+      console.log(response);
+      sendResponse({result: response});
+    }
+    )
+    .catch(error =>
+    {
+      console.log('Error writing to sheet: ', error.message);
+      sendResponse({error: error.message});
+    }
+    )
+    return true;
+  }
+  else if (request.action === 'readFromSheet')
+  {
+    getAuthToken()
+    .then(token => readFromSheet(token, request.spreadsheetID, request.sheetName, request.range))
+    .then(response =>
+    {
+      console.log(response);
+      sendResponse({result: response});
+    }
+    )
+    .catch(error =>
+    {
+      console.log('Error reading from sheet: ', error.message);
+      sendResponse({error: error.message})
+    }
+    )
+
+    return true;
+  }
 }) 
 
-//SHEETS
+
+function readFromSheet(token, spreadsheetID, sheetName, range)
+{
+  console.log(`${sheetName}!${range}`);
+  return fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetID}/values/${sheetName}!${range}`,
+    {
+      method: 'GET',
+      headers: 
+      {
+        'Authorization': `Bearer ${token}`,
+        'Content-type': 'application/json'
+      }
+    }
+  )
+  .then(response => response.json())
+  .then(data =>
+  {
+    if (data.error)
+    {
+      throw new Error(data.error.message);
+    }
+
+    return data.values;
+  }
+  )
+
+}
+
+function writeToSheet(token, spreadsheetID, sheetName, range, values)
+{
+  return fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetID}/values/${sheetName}!${range}:append?valueInputOption=RAW`, 
+    {
+      method: 'POST',
+      headers:
+      {
+        'Authorization': `Bearer ${token}`,
+        'Content-type': 'application/json'
+      },
+      body: JSON.stringify(
+        {
+          values: values
+        }
+      )
+    }
+  )
+  .then(response => response.json())
+  .then(data => 
+  {
+    if (data.error)
+    {
+      throw new Error(data.error.message);
+    }
+
+    return data;
+  }
+  )
+}
+
 function createSheet(token, spreadsheetID, sheetName)
 {
   return fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetID}:batchUpdate`, 
