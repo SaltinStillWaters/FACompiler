@@ -1,12 +1,9 @@
 const keys = ['currURL', 'FANumber', 'courseID', 'FAID', 'questionID'];
+let creds;
 const spreadsheetID = '1Nt9_t6cTjv-J7Ej9q-b9NK8aETeB0OxEkr4eFGz_D4I';
-const infoSheetName = 'Info';
-
-let urlInfo;
-
 
 chrome.storage.local.get(keys)
-.then(response =>
+.then((response) =>
 {
     if (response['currURL'] !== getCleanedURL())
     {
@@ -32,95 +29,71 @@ chrome.storage.local.get(keys)
         return response;
     }
 })
-.then(response =>
+.then((response) =>
 {
-    urlInfo = response;
-    const rowCountCell = 'e1';
-
-    return readFromSheet(spreadsheetID, infoSheetName, rowCountCell)
-    .then(result =>
-    {
-        return Number(result[0][0]);
-    })
+    creds = response;
+    return checkSheetExists(spreadsheetID, response['FANumber']);
 })
-.then(rowCount =>
+.then((exists) =>
 {
-    let lastRow = String(Number('2') + rowCount) - 1;
-    let range = 'a2:b' + lastRow;
+    if (exists)
+    {
+        console.log('Sheet: ', creds['FANumber'], ' exists');
+        return Promise.resolve();
+    }
+    else
+    {
+        console.log('Sheet: ', creds['FANumber'], ' does not exist');
+        console.log('Creating sheet: ', creds['FANumber'], '...');
 
-    //call function for getting sheetName
-    console.log(range);
-}
-)
-// .then((exists) =>
-// {
-//     if (exists)
-//     {
-//         console.log('Sheet: ', urlInfo['FANumber'], ' exists');
-//         return Promise.resolve();
-//     }
-//     else
-//     {
-//         console.log('Sheet: ', urlInfo['FANumber'], ' does not exist');
-//         console.log('Creating sheet: ', urlInfo['FANumber'], '...');
-
-//         return createSheet(spreadsheetID, urlInfo['FANumber'])
-//         .then(newSheet =>
-//         {
-//             if (newSheet)
-//             {
-//                 console.log('Sheet: ', urlInfo['FANumber'], ' created: ', );
-//                 return initSheet(spreadsheetID, urlInfo['FANumber']);
-//             }
-//             else
-//             {
-//                 Promise.reject('Failed to create new Sheet: ', urlInfo['FANumber']);
-//             }
-//         })
-//         .then(initResponse =>
-//         {
-//             if (initResponse)
-//             {
-//                 console.log("Sheet: ", urlInfo['FANumber'], ' initialized');
-//                 return Promise.resolve();
-//             }
-//             else
-//             {
-//                 console.log("Sheet: ", urlInfo['FANumber'], ' not initialized');
-//                 return Promise.reject();
-//             }
-//         })
-//     }
-// })
-// .then(() =>
-// {
-//     const rowCountCell = 'e1';
-
-//     return readFromSheet(spreadsheetID, 'Info', rowCountCell)
-//     .then(result => 
-//     {
-//         if (result)
-//         {
-//             return result[0][0];
-//         }
-//         else
-//         {
-//             return Promise.reject('No value returned from readFromSheet()');
-//         }
-//     }
-//     )
-// })
-// .then(result =>
-// {
-//     if (result === 0)
-//     {
-//         console.log('result is 0');
-//     }
-//     else
-//     {
-//         console.log('result is ', result);
-//     }
-// })
+        return createSheet(spreadsheetID, creds['FANumber'])
+        .then(newSheet =>
+        {
+            if (newSheet)
+            {
+                console.log('Sheet: ', creds['FANumber'], ' created: ', );
+                return initSheet(spreadsheetID, creds['FANumber']);
+            }
+            else
+            {
+                Promise.reject('Failed to create new Sheet: ', creds['FANumber']);
+            }
+        })
+        .then(initResponse =>
+        {
+            if (initResponse)
+            {
+                console.log("Sheet: ", creds['FANumber'], ' initialized');
+                return Promise.resolve();
+            }
+            else
+            {
+                console.log("Sheet: ", creds['FANumber'], ' not initialized');
+                return Promise.reject();
+            }
+        })
+    }
+})
+.then(() =>
+{
+    return readFromSheet(spreadsheetID, 'Info', 'e1')
+    .then(result => 
+    {
+        if (result)
+        {
+            return result[0][0];
+        }
+        else
+        {
+            return Promise.reject('No value returned from readFromSheet()');
+        }
+    }
+    )
+})
+.then(result =>
+{
+    console.log('Output: ', result);
+})
 .catch((error) =>
 {
     console.error(error);
@@ -211,29 +184,29 @@ function createSheet(spreadsheetID, sheetName)
     });
 }
 
-// function checkSheetExists(spreadsheetID, sheetName)
-// {
-//     return new Promise((resolve, reject) =>
-//     {
-//         chrome.runtime.sendMessage(
-//         {
-//                 action: 'checkSheetExists',
-//                 spreadsheetID: spreadsheetID,
-//                 sheetName: sheetName
-//         },
-//         response =>
-//         {
-//             if (response.error)
-//             {
-//                 reject(response.error);
-//             }
-//             else
-//             {
-//                 resolve(response.exists);
-//             }
-//         });
-//     });
-// }
+function checkSheetExists(spreadsheetID, sheetName)
+{
+    return new Promise((resolve, reject) =>
+    {
+        chrome.runtime.sendMessage(
+        {
+                action: 'checkSheetExists',
+                spreadsheetID: spreadsheetID,
+                sheetName: sheetName
+        },
+        response =>
+        {
+            if (response.error)
+            {
+                reject(response.error);
+            }
+            else
+            {
+                resolve(response.exists);
+            }
+        });
+    });
+}
 
 //EXTRACT
 function getvalues()
