@@ -21,65 +21,79 @@ chrome.storage.local.get(keys)
         .then(() =>
         {
             console.log('...Local Data updated');
+            return chrome.storage.local.get(keys);
         })
     }
-})
-.then(() => 
-{
-    return chrome.storage.local.get(keys);
+    else
+    {
+        return response;
+    }
 })
 .then((response) =>
 {
     creds = response;
     return checkSheetExists(spreadsheetID, response['FANumber']);
 })
-.then(exists =>
+.then((exists) =>
 {
     if (exists)
     {
         console.log('Sheet: ', creds['FANumber'], ' exists');
+        return Promise.resolve();
     }
     else
     {
         console.log('Sheet: ', creds['FANumber'], ' does not exist');
         console.log('Creating sheet: ', creds['FANumber'], '...');
-        return createSheet(spreadsheetID, creds['FANumber']);
+
+        return createSheet(spreadsheetID, creds['FANumber'])
+        .then(newSheet =>
+        {
+            if (newSheet)
+            {
+                console.log('Sheet: ', creds['FANumber'], ' created: ', );
+                return initSheet(spreadsheetID, creds['FANumber']);
+            }
+            else
+            {
+                Promise.reject('Failed to create new Sheet: ', creds['FANumber']);
+            }
+        })
+        .then(initResponse =>
+        {
+            if (initResponse)
+            {
+                console.log("Sheet: ", creds['FANumber'], ' initialized');
+                return Promise.resolve();
+            }
+            else
+            {
+                console.log("Sheet: ", creds['FANumber'], ' not initialized');
+                return Promise.reject();
+            }
+        })
     }
 })
-.then(newSheet =>
-{
-    if (newSheet)
-    {
-        console.log('Sheet: ', creds['FANumber'], ' created: ', );
-        initSheet(spreadsheetID, creds['FANumber'])
-    }
-}
-)
-.then(response =>
-{
-    if (response)
-    {
-        console.log('Sheet successfully initialized: ', response);
-    }
-}
-)
 .then(() =>
+{
+    return readFromSheet(spreadsheetID, 'Info', 'e1')
+    .then(result => 
     {
-        return(readFromSheet(spreadsheetID, 'Info', 'A1'));   
+        if (result)
+        {
+            return result[0][0];
+        }
+        else
+        {
+            return Promise.reject('No value returned from readFromSheet()');
+        }
     }
-)
+    )
+})
 .then(result =>
 {
-    if (result)
-    {
-        console.log('Output: ', result);
-    }
-    else
-    {
-        console.log('No output');
-    }
-}
-)
+    console.log('Output: ', result);
+})
 .catch((error) =>
 {
     console.error(error);
