@@ -1,92 +1,139 @@
-const keys = ['currURL', 'FANumber', 'courseID', 'FAID', 'questionID'];
-const spreadsheetID = '1Nt9_t6cTjv-J7Ej9q-b9NK8aETeB0OxEkr4eFGz_D4I';
-const infoSheetName = 'Info';
+const KEYS = ['currURL', 'FANumber', 'courseID', 'FAID', 'questionID'];
+const SPREADSHEET_ID = '1Nt9_t6cTjv-J7Ej9q-b9NK8aETeB0OxEkr4eFGz_D4I';
 
-let urlInfo;
+const INFO_SHEET =
+{
+    name: 'Info',
+    rowCountCell: 'e1',
+    tableRange: 'a2:b2',
+    rowCount: undefined,
+    tableValues: undefined,
+}
+
+let URL_INFO;
 
 
-chrome.storage.local.get(keys)
+chrome.storage.local.get(KEYS)
 .then(response =>
 {
-    if (response['currURL'] !== getCleanedURL())
+    if (response['currURL'] === getCleanedURL())
     {
-        console.log('Local Data needs update...');
-
-        let values = getvalues();
-
-        let keyVal = {};
-        keys.forEach((key, index) =>
-        {
-            keyVal[key] = values[index];
-        })
-        
-        return chrome.storage.local.set(keyVal)
-        .then(() =>
-        {
-            console.log('...Local Data updated');
-            return chrome.storage.local.get(keys);
-        })
-    }
-    else
-    {
+        console.log('Local Data matches current URL');
         return response;
     }
-})
-.then(response =>
-{
-    urlInfo = response;
-    const rowCountCell = 'e1';
 
-    return readFromSheet(spreadsheetID, infoSheetName, rowCountCell)
-    .then(result =>
+    console.log('Local Data needs update');
+    
+    return chrome.storage.local.set(getURLInfo())
+    .then(() =>
     {
-        return Number(result[0][0]);
+        console.log('Local Data updated');
+        return chrome.storage.local.get(KEYS);
     })
 })
-.then(rowCount =>
+.then(newURLInfo =>
 {
-    let lastRow = String(Number('2') + rowCount) - 1;
-    let range = 'a2:b' + lastRow;
+    URL_INFO = newURLInfo;
 
-    //call function for getting sheetName
-    console.log(range);
-}
-)
+    return readFromSheet(SPREADSHEET_ID, INFO_SHEET.name, INFO_SHEET.rowCountCell)
+    .then(result =>
+    {
+        INFO_SHEET.rowCount =  Number(result[0][0]);
+        return Promise.resolve();
+    })
+})
+.then(() =>
+{
+    updateInfoSheetRange();
+
+    return readFromSheet(SPREADSHEET_ID, INFO_SHEET.name, INFO_SHEET.tableRange)
+    .then(result =>
+    {
+        result = result.map(row =>
+            row.map(val =>
+            {
+                num = parseInt(val);
+                return isNaN(num) ? val : num;
+            })
+        );
+
+        INFO_SHEET.tableValues = result;
+        return Promise.resolve();
+    })
+})
+.then(() =>
+{
+    const key = Number(URL_INFO['FAID']);
+    const index = binarySearch(key, INFO_SHEET.tableValues);
+    
+    if (INFO_SHEET.tableValues[index][0]  !== key)
+    {
+        console.log(`Sheet ${key} does not exists`);
+        console.log(`Creating sheet ${key}`);
+
+        return createSheet(SPREADSHEET_ID, URL_INFO["FANumber"])
+        .then(newSheet =>
+        {
+            if (newSheet)
+            {
+                console.log(`Sheet: ${URL_INFO['FANumber']} created`);
+                return initSheet(SPREADSHEET_ID, URL_INFO['FANumber']);
+            }
+            else
+            {
+                return Promise.reject('Failed to create new Sheet: ', URL_INFO['FANumber']);
+            }
+        })
+        .then(initResponse =>
+        {
+            if (initResponse)
+                {
+                    console.log("Sheet: ", URL_INFO['FANumber'], ' initialized');
+                    return Promise.resolve();
+                }
+                else
+                {
+                    console.log("Sheet: ", URL_INFO['FANumber'], ' not initialized');
+                    return Promise.reject();
+                }
+            })
+    }
+})
 // .then((exists) =>
 // {
 //     if (exists)
 //     {
-//         console.log('Sheet: ', urlInfo['FANumber'], ' exists');
+//         console.log('Sheet: ', URL_INFO['FANumber'], ' exists');
 //         return Promise.resolve();
 //     }
 //     else
 //     {
-//         console.log('Sheet: ', urlInfo['FANumber'], ' does not exist');
-//         console.log('Creating sheet: ', urlInfo['FANumber'], '...');
+//         console.log('Sheet: ', URL_INFO['FANumber'], ' does not exist');
+//         console.log('Creating sheet: ', URL_INFO['FANumber'], '...');
 
-//         return createSheet(spreadsheetID, urlInfo['FANumber'])
+//         return createSheet(SPREADSHEET_ID, URL_INFO['FANumber'])
 //         .then(newSheet =>
 //         {
 //             if (newSheet)
 //             {
-//                 console.log('Sheet: ', urlInfo['FANumber'], ' created: ', );
-//                 return initSheet(spreadsheetID, urlInfo['FANumber']);
+//                 console.log('Sheet: ', URL_INFO['FANumber'], ' created: ', );
+//                 return initSheet(SPREADSHEET_ID, URL_INFO['FANumber']);
 //             }
 //             else
 //             {
-//                 Promise.reject('Failed to create new Sheet: ', urlInfo['FANumber']);
+//                 Promise.reject('Failed to create new Sheet: ', URL_INFO['FANumber']);
 //             }
 //         })
 //         .then(initResponse =>
 //         {
 //             if (initResponse)
 //             {
-//                 console.log("Sheet: ", urlInfo['FANumber'], ' initialized');
+//                 console.log("Sheet: ", URL_INFO['FANumber'], ' initialized');
 //                 return Promise.resolve();
 //             }
 //             else
 //             {
-//                 console.log("Sheet: ", urlInfo['FANumber'], ' not initialized');
+//                 console.log("Sheet: ", URL_INFO['FANumber'], ' not initialized');
 //                 return Promise.reject();
 //             }
 //         })
@@ -94,9 +141,9 @@ chrome.storage.local.get(keys)
 // })
 // .then(() =>
 // {
-//     const rowCountCell = 'e1';
+//     const INFO_SHEET.rowCountCell = 'e1';
 
-//     return readFromSheet(spreadsheetID, 'Info', rowCountCell)
+//     return readFromSheet(SPREADSHEET_ID, 'Info', INFO_SHEET.rowCountCell)
 //     .then(result => 
 //     {
 //         if (result)
@@ -126,9 +173,41 @@ chrome.storage.local.get(keys)
     console.error(error);
 });
 
-function getFASheetName(spreadsheetID, FAID)
+function updateInfoSheetRange()
 {
+    let splitRange = INFO_SHEET.tableRange.split('b');
+    let num = Number(splitRange[1]);
     
+    num += INFO_SHEET.rowCount;
+    num = String(num);
+
+    INFO_SHEET.tableRange = splitRange[0] + 'b' + num;
+}
+function binarySearch(key, range)
+{
+    let left = 0;
+    let right = range.length - 1;
+
+    console.log(key, range);
+    while(left <= right)
+    {
+        mid = Math.floor((left + right) / 2);
+        
+        if (key < range[mid][0])
+        {
+            right = mid - 1;
+        }
+        else if (key > range[mid][0])
+        {
+            left = mid + 1;
+        }
+        else
+        {
+            return mid;
+        }
+    }
+
+    return mid;
 }
 
 function readFromSheet(spreadsheetID, sheetName, range)
@@ -236,16 +315,23 @@ function createSheet(spreadsheetID, sheetName)
 // }
 
 //EXTRACT
-function getvalues()
+function getURLInfo()
 {
     try
     {
         let values =  [getCleanedURL(), getFANumber(), getCourseID(), getFAID(), getQuestionID()];
-        return values;
+        let result = {};
+        
+        KEYS.forEach((key, index) =>
+        {
+            result[key] = values[index];
+        })
+
+        return result;
     }
     catch (error)
     {
-        console.error('Error in getvalues(): ', error);
+        console.error('Error in getURLInfo(): ', error);
         return null;
     }
 }
