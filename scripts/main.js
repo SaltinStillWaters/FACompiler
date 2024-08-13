@@ -66,11 +66,34 @@ chrome.storage.local.get(KEYS)
     const key = Number(URL_INFO['FAID']);
     const index = binarySearch(key, INFO_SHEET.tableValues);
     
-    if (INFO_SHEET.tableValues[index][0]  !== key)
+    let result = 
+    {
+        createSheet: true,
+        indexToInsert: index,
+    };
+
+    if (INFO_SHEET.rowCount === 0)
+    {
+        result.indexToInsert = -1;
+    }
+    else if (INFO_SHEET.tableValues[index][0]  === key)
+    {
+        result.createSheet = false;
+    }
+    else if (INFO_SHEET.tableValues[index][0] > key)
+    {
+        result.indexToInsert = index - 1;
+    }
+
+    return result;
+})
+.then(result =>
+{
+    if (result.createSheet)
     {
         console.log(`Sheet ${key} does not exists`);
         console.log(`Creating sheet ${key}`);
-
+    
         return createSheet(SPREADSHEET_ID, URL_INFO["FANumber"])
         .then(newSheet =>
         {
@@ -87,91 +110,28 @@ chrome.storage.local.get(KEYS)
         .then(initResponse =>
         {
             if (initResponse)
-                {
-                    console.log("Sheet: ", URL_INFO['FANumber'], ' initialized');
-                    return Promise.resolve();
-                }
-                else
-                {
-                    console.log("Sheet: ", URL_INFO['FANumber'], ' not initialized');
-                    return Promise.reject();
-                }
-            })
-    }
+            {
+                console.log("Sheet: ", URL_INFO['FANumber'], ' initialized');
+                return Promise.resolve();
+            }
+            else
+            {
+                console.log("Sheet: ", URL_INFO['FANumber'], ' not initialized');
+                return Promise.reject();
+            }
+        })
+    }   
+
 })
-// .then((exists) =>
-// {
-//     if (exists)
-//     {
-//         console.log('Sheet: ', URL_INFO['FANumber'], ' exists');
-//         return Promise.resolve();
-//     }
-//     else
-//     {
-//         console.log('Sheet: ', URL_INFO['FANumber'], ' does not exist');
-//         console.log('Creating sheet: ', URL_INFO['FANumber'], '...');
-
-//         return createSheet(SPREADSHEET_ID, URL_INFO['FANumber'])
-//         .then(newSheet =>
-//         {
-//             if (newSheet)
-//             {
-//                 console.log('Sheet: ', URL_INFO['FANumber'], ' created: ', );
-//                 return initSheet(SPREADSHEET_ID, URL_INFO['FANumber']);
-//             }
-//             else
-//             {
-//                 Promise.reject('Failed to create new Sheet: ', URL_INFO['FANumber']);
-//             }
-//         })
-//         .then(initResponse =>
-//         {
-//             if (initResponse)
-//             {
-//                 console.log("Sheet: ", URL_INFO['FANumber'], ' initialized');
-//                 return Promise.resolve();
-//             }
-//             else
-//             {
-//                 console.log("Sheet: ", URL_INFO['FANumber'], ' not initialized');
-//                 return Promise.reject();
-//             }
-//         })
-//     }
-// })
-// .then(() =>
-// {
-//     const INFO_SHEET.rowCountCell = 'e1';
-
-//     return readFromSheet(SPREADSHEET_ID, 'Info', INFO_SHEET.rowCountCell)
-//     .then(result => 
-//     {
-//         if (result)
-//         {
-//             return result[0][0];
-//         }
-//         else
-//         {
-//             return Promise.reject('No value returned from readFromSheet()');
-//         }
-//     }
-//     )
-// })
-// .then(result =>
-// {
-//     if (result === 0)
-//     {
-//         console.log('result is 0');
-//     }
-//     else
-//     {
-//         console.log('result is ', result);
-//     }
-// })
 .catch((error) =>
 {
     console.error(error);
 });
+
+function insertRow(spreadsheetID, sheetName, row, colLength, values)
+{
+
+}
 
 function updateInfoSheetRange()
 {
@@ -208,6 +168,31 @@ function binarySearch(key, range)
     }
 
     return mid;
+}
+
+function insertRowToSheet(spreadsheetID, sheetName, row, colLength, values)
+{
+    return new Promise((resolve, reject) =>
+    {
+        chrome.runtime.sendMessage(
+            {
+                action: 'readFromSheet',
+                spreadsheetID: spreadsheetID,
+                sheetName: sheetName,
+                range: range
+            },
+            response =>
+            {
+                if (response.error)
+                {
+                    reject(response.error);
+                }
+                else
+                {
+                    resolve(response.result);
+                }
+            });
+    });
 }
 
 function readFromSheet(spreadsheetID, sheetName, range)
