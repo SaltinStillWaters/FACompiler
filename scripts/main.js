@@ -10,7 +10,7 @@ const INFO_SHEET =
     tableValues: undefined,
 }
 
-let URL_INFO;
+let URL_INFO = undefined;
 
 
 chrome.storage.local.get(KEYS)
@@ -34,7 +34,7 @@ chrome.storage.local.get(KEYS)
 .then(newURLInfo =>
 {
     URL_INFO = newURLInfo;
-
+    console.log(URL_INFO);
     return readFromSheet(SPREADSHEET_ID, INFO_SHEET.name, INFO_SHEET.rowCountCell)
     .then(result =>
     {
@@ -44,6 +44,11 @@ chrome.storage.local.get(KEYS)
 })
 .then(() =>
 {
+    if (INFO_SHEET.rowCount === 0)
+    {
+        return Promise.resolve();
+    }
+
     updateInfoSheetRange();
 
     return readFromSheet(SPREADSHEET_ID, INFO_SHEET.name, INFO_SHEET.tableRange)
@@ -63,36 +68,41 @@ chrome.storage.local.get(KEYS)
 })
 .then(() =>
 {
-    const key = Number(URL_INFO['FAID']);
-    const index = binarySearch(key, INFO_SHEET.tableValues);
-    
     let result = 
     {
         createSheet: true,
-        indexToInsert: index,
+        indexToInsert: undefined,
     };
 
     if (INFO_SHEET.rowCount === 0)
     {
-        result.indexToInsert = -1;
+        result.indexToInsert = 1;
+        return result
     }
-    else if (INFO_SHEET.tableValues[index][0]  === key)
+
+
+    const key = Number(URL_INFO['FAID']);
+    let index = binarySearch(key, INFO_SHEET.tableValues);
+    
+
+    if (INFO_SHEET.tableValues[index][0]  === key)
     {
         result.createSheet = false;
     }
-    else if (INFO_SHEET.tableValues[index][0] > key)
+    else if (key > INFO_SHEET.tableValues[index][0])
     {
-        result.indexToInsert = index - 1;
+        index++;
     }
 
-    return result;
+    result.indexToInsert = index + 1; //+1 because row 1 is the header
+    return result; 
 })
 .then(result =>
 {
     if (result.createSheet)
     {
-        console.log(`Sheet ${key} does not exists`);
-        console.log(`Creating sheet ${key}`);
+        console.log(`Sheet ${URL_INFO['FAID']} does not exists`);
+        console.log(`Creating sheet ${URL_INFO['FAID']}`);
     
         return createSheet(SPREADSHEET_ID, URL_INFO["FANumber"])
         .then(newSheet =>
@@ -112,7 +122,7 @@ chrome.storage.local.get(KEYS)
             if (initResponse)
             {
                 console.log("Sheet: ", URL_INFO['FANumber'], ' initialized');
-                return Promise.resolve();
+                return insertRowToSheet(SPREADSHEET_ID, INFO_SHEET.name, result.indexToInsert, [URL_INFO['FAID'], URL_INFO['FANumber']]);
             }
             else
             {
@@ -123,15 +133,16 @@ chrome.storage.local.get(KEYS)
     }   
 
 })
+.then(() =>
+{
+    console.log(INFO_SHEET);
+    return writeToSheet(SPREADSHEET_ID, INFO_SHEET.name, INFO_SHEET.rowCountCell, [[INFO_SHEET.rowCount + 1]]);
+})
 .catch((error) =>
 {
     console.error(error);
 });
 
-function insertRow(spreadsheetID, sheetName, row, colLength, values)
-{
-
-}
 
 function updateInfoSheetRange()
 {
@@ -170,16 +181,17 @@ function binarySearch(key, range)
     return mid;
 }
 
-function insertRowToSheet(spreadsheetID, sheetName, row, colLength, values)
+function insertRowToSheet(spreadsheetID, sheetName, rowIndex, rowData)
 {
     return new Promise((resolve, reject) =>
     {
         chrome.runtime.sendMessage(
             {
-                action: 'readFromSheet',
+                action: 'insertRowToSheet',
                 spreadsheetID: spreadsheetID,
                 sheetName: sheetName,
-                range: range
+                rowIndex: rowIndex,
+                rowData: rowData
             },
             response =>
             {

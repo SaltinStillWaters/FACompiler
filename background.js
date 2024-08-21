@@ -71,12 +71,123 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) =>
 
     return true;
   }
+  else if (request.action === 'insertRowToSheet')
+  {
+    getAuthToken()
+    .then(token => 
+        getSheetID(token, request.spreadsheetID, request.sheetName)
+        .then(sheetId => insertRowToSheet(token, request.spreadsheetID, sheetId, request.rowIndex, request.rowData))
+      )
+    .then(response =>
+    {
+      console.log(response);
+      sendResponse({result: response});
+    })
+    .catch(error =>
+    {
+      console.log('Error inserting row: ', error.message);
+      sendResponse({error: error.message});
+    })
+
+    return true;
+  }
 }) 
 
+function insertRowToSheet(token, spreadsheetID, sheetId, rowIndex, rowData)
+{
+  const requestBody =
+  {
+    requests:
+    [
+      {
+        insertDimension: 
+        {
+          range:
+          {
+            sheetId: sheetId,
+            dimension: 'ROWS',
+            startIndex: rowIndex,
+            endIndex: rowIndex + 1
+          },
+          inheritFromBefore: false
+        }
+      },
+      {
+        updateCells:
+        {
+          rows:
+          [
+            {
+              values: rowData.map(cellData => ({userEnteredValue: {stringValue: cellData}}))
+            }
+          ],
+          fields: 'userEnteredValue',
+          start:
+          {
+            sheetId: sheetId,
+            rowIndex: rowIndex,
+            columnIndex: 0
+          }
+        }
+      }
+    ]
+  };
+
+  return fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetID}:batchUpdate`,
+    {
+      method: 'POST',
+      headers:
+      {
+        'Authorization': `Bearer ${token}`,
+        'Content-type': 'application/json'
+      },
+      body: JSON.stringify(requestBody)
+    })
+    .then(response => response.json())
+    .then(data =>
+    {
+      if (data.error)
+      {
+        throw new Error(data.error.message);
+      }
+      console.log(data);
+      return data;
+    }
+    )
+}
+
+function getSheetID(token, spreadsheetID, sheetName)
+{
+  return fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetID}?fields=sheets.properties`,
+    {
+      method: 'GET',
+      headers:
+      {
+        'Authorization': `Bearer ${token}`,
+        'Content-type': 'application/json'
+      }
+    })
+    .then(response => response.json())
+    .then(data =>
+    {
+      let sheetId = null;
+      for (let i = 0; i < data.sheets.length; i++) 
+      {
+        if (data.sheets[i].properties.title === sheetName) 
+        {
+          sheetId = data.sheets[i].properties.sheetId;
+          break;
+        }
+      }
+
+      console.log('sheet id: ', sheetId);
+      return sheetId;
+      }
+    )
+}
 
 function readFromSheet(token, spreadsheetID, sheetName, range)
 {
-  console.log(`${sheetName}!${range}`);
   return fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetID}/values/${sheetName}!${range}`,
     {
       method: 'GET',
@@ -103,9 +214,9 @@ function readFromSheet(token, spreadsheetID, sheetName, range)
 
 function writeToSheet(token, spreadsheetID, sheetName, range, values)
 {
-  return fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetID}/values/${sheetName}!${range}:append?valueInputOption=RAW`, 
+  return fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetID}/values/${sheetName}!${range}?valueInputOption=RAW`, 
     {
-      method: 'POST',
+      method: 'PUT',
       headers:
       {
         'Authorization': `Bearer ${token}`,
