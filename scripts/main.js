@@ -124,12 +124,43 @@ chrome.storage.local.get(KEYS)
         })
     }   
 })
+.then(() =>
+{
+    console.log('Waiting for Canvas Loader to load');
+    return waitCanvasLoader("span.points.question_points")
+    .then(() =>
+    {
+        console.log('Canvas Loader loaded successfully');
+        return new Promise.resolve();
+    })
+})
 .catch((error) =>
 {
-    console.error(error);
+    console.error(error.message);
 });
 
-funtion 
+function waitCanvasLoader(selector, interval = 100, maxWait = 10000)
+{
+    return new Promise((resolve, reject) =>
+    {
+        const checkExistence = setInterval(() =>
+        {
+            const element = document.querySelector(selector);
+            if (!element)
+            {
+                clearInterval(checkExistence);
+                resolve();
+            }
+        }, interval);
+        
+        setTimeout(() =>
+        {
+            clearInterval(checkExistence);
+            reject(new Error('Max wait of ' + maxWait + ' seconds for Canvas Loader exceeded'));
+        }, maxWait);
+    });
+}
+
 function updateInfoSheetRange()
 {
     let splitRange = INFO_SHEET.tableRange.split('b');
