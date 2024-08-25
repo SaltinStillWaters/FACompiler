@@ -127,17 +127,66 @@ chrome.storage.local.get(KEYS)
 .then(() =>
 {
     console.log('Waiting for Canvas Loader to load');
+
     return waitCanvasLoader("span.points.question_points")
     .then(() =>
     {
         console.log('Canvas Loader loaded successfully');
-        return new Promise.resolve();
+        return Promise.resolve();
     })
+})
+.then(() =>
+{
+    let questionStatus = document.querySelector("span.question_points_holder").textContent;
+    console.log("questionStatus: ", questionStatus);
+
+    console.log(getQuestionStatus(questionStatus));
 })
 .catch((error) =>
 {
     console.error(error.message);
 });
+
+function getQuestionStatus(rawStatus)
+{
+    if (rawStatus.includes('New Question'))
+    {
+        return 'new';
+    }
+    
+    let nums = [];
+
+    let split = rawStatus.split(' ');
+    for(let x = 0; x < split.length; ++x)
+    {
+        if (!isNaN(Number(split[x])))
+        {
+            nums.push(Number(split[x]));
+        }
+    }
+
+    if (nums.length !== 2)
+    {
+        throw new Error('Unexpected Question Status: Does not contain exactly 2 numbers');
+    }
+
+    if (nums[0] === nums[1])
+    {
+        return 'correct';
+    }
+    else if (nums[0] === 0)
+    {
+        return 'incorrect';
+    }
+    else if (nums[0] < nums[1])
+    {
+        return 'partially incorrect';
+    }
+    else
+    {
+        throw new Error('Unexpected Question Status');
+    }
+}
 
 function waitCanvasLoader(selector, interval = 100, maxWait = 10000)
 {
