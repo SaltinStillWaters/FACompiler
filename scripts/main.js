@@ -1,4 +1,4 @@
-chrome.storage.local.get(KEYS)
+chrome.storage.local.get(G_KEYS)
 .then(response =>
 {
     if (response['currURL'] === Extract.getCleanedURL())
@@ -13,33 +13,34 @@ chrome.storage.local.get(KEYS)
     .then(() =>
     {
         console.log('Local Data updated');
-        return chrome.storage.local.get(KEYS);
-    })
+        return chrome.storage.local.get(G_KEYS);
+    });
 })
 .then(newURLInfo =>
 {
-    URL_INFO = newURLInfo;
-    console.log('Updating global var: URL_INFO');
+    G_URL_INFO = newURLInfo;
+    console.log('Updated global var: G_URL_INFO');
 
-    return Sheet.read(SPREADSHEET_ID, INFO_SHEET.name, INFO_SHEET.rowCountCell)
+    console.log("Reading row count from sheet")
+    return Sheet.read(SPREADSHEET_ID, G_INFO_SHEET.name, G_INFO_SHEET.rowCountCell)
     .then(result =>
     {
-        INFO_SHEET.rowCount =  Number(result[0][0]);
-        console.log('Reading row count from sheet: ', INFO_SHEET.rowCount);
+        G_INFO_SHEET.rowCount =  Number(result[0][0]);
+        console.log('Row count: ', G_INFO_SHEET.rowCount);
 
         return Promise.resolve();
     })
 })
 .then(() =>
 {
-    if (INFO_SHEET.rowCount === 0)
+    if (G_INFO_SHEET.rowCount === 0)
     {
         return Promise.resolve();
     }
 
     updateInfoSheetRange();
 
-    return Sheet.read(SPREADSHEET_ID, INFO_SHEET.name, INFO_SHEET.tableRange)
+    return Sheet.read(SPREADSHEET_ID, G_INFO_SHEET.name, G_INFO_SHEET.tableRange)
     .then(result =>
     {
         result = result.map(row =>
@@ -50,7 +51,7 @@ chrome.storage.local.get(KEYS)
             })
         );
 
-        INFO_SHEET.tableValues = result;
+        G_INFO_SHEET.tableValues = result;
         return Promise.resolve();
     })
 })
@@ -62,22 +63,21 @@ chrome.storage.local.get(KEYS)
         indexToInsert: undefined,
     };
 
-    if (INFO_SHEET.rowCount === 0)
+    if (G_INFO_SHEET.rowCount === 0)
     {
         result.indexToInsert = 1;
         return result
     }
 
-
-    const key = Number(URL_INFO['FAID']);
-    let index = binarySearch(key, INFO_SHEET.tableValues);
+    const key = Number(G_URL_INFO['FAID']);
+    let index = binarySearch(key, G_INFO_SHEET.tableValues);
     
 
-    if (INFO_SHEET.tableValues[index][0]  === key)
+    if (G_INFO_SHEET.tableValues[index][0]  === key)
     {
         result.createSheet = false;
     }
-    else if (key > INFO_SHEET.tableValues[index][0])
+    else if (key > G_INFO_SHEET.tableValues[index][0])
     {
         index++;
     }
@@ -89,36 +89,36 @@ chrome.storage.local.get(KEYS)
 {
     if (result.createSheet)
     {
-        console.log(`Sheet ${URL_INFO['FAID']} does not exists`);
-        console.log(`Creating sheet ${URL_INFO['FAID']}`);
+        console.log(`Sheet ${G_URL_INFO['FAID']} does not exists`);
+        console.log(`Creating sheet ${G_URL_INFO['FAID']}`);
     
-        return Sheet.create(SPREADSHEET_ID, URL_INFO["FANumber"])
+        return Sheet.create(SPREADSHEET_ID, G_URL_INFO["FANumber"])
         .then(newSheet =>
         {
             if (newSheet)
             {
-                console.log(`Sheet: ${URL_INFO['FANumber']} created`);
-                return initSheet(SPREADSHEET_ID, URL_INFO['FANumber']);
+                console.log(`Sheet: ${G_URL_INFO['FANumber']} created`);
+                return initSheet(SPREADSHEET_ID, G_URL_INFO['FANumber']);
             }
             else
             {
-                return Promise.reject('Failed to create new Sheet: ', URL_INFO['FANumber']);
+                return Promise.reject('Failed to create new Sheet: ', G_URL_INFO['FANumber']);
             }
         })
         .then(initResponse =>
         {
             if (initResponse)
             {
-                console.log("Sheet: ", URL_INFO['FANumber'], ' initialized');
-                return Sheet.insertRow(SPREADSHEET_ID, INFO_SHEET.name, result.indexToInsert, [URL_INFO['FAID'], URL_INFO['FANumber']])
+                console.log("Sheet: ", G_URL_INFO['FANumber'], ' initialized');
+                return Sheet.insertRow(SPREADSHEET_ID, G_INFO_SHEET.name, result.indexToInsert, [G_URL_INFO['FAID'], G_URL_INFO['FANumber']])
                 .then(() =>
                 {
-                    return Sheet.write(SPREADSHEET_ID, INFO_SHEET.name, INFO_SHEET.rowCountCell, [[INFO_SHEET.rowCount + 1]]);
+                    return Sheet.write(SPREADSHEET_ID, G_INFO_SHEET.name, G_INFO_SHEET.rowCountCell, [[G_INFO_SHEET.rowCount + 1]]);
                 });
             }
             else
             {
-                console.log("Sheet: ", URL_INFO['FANumber'], ' not initialized');
+                console.log("Sheet: ", G_URL_INFO['FANumber'], ' not initialized');
                 return Promise.reject();
             }
         })
@@ -140,13 +140,48 @@ chrome.storage.local.get(KEYS)
     let questionStatus = document.querySelector("span.question_points_holder").textContent;
     console.log("questionStatus: ", questionStatus);
 
-    console.log(getQuestionStatus(questionStatus));
+    questionStatus = getQuestionStatus(questionStatus);
+    console.log("Translated question status: ", questionStatus);
+
+    const question = document.querySelector('.question_text.user_content').textContent;
+    console.log(question);
+
+    const answerType = getAnswerType();
+    console.log('Answer type: ', answerType);
+
+    getChoices(answerType);
 })
 .catch((error) =>
 {
     console.error(error.message);
 });
 
+function getChoices(answerType)
+{
+    if (answerType === 'radio')
+    {
+        let choices = [];
+        document.querySelectorAll('.answer_label')
+        .forEach(div =>
+        {
+            choices.push(div.textContent.slice(9, div.textContent.length - 7));
+        });
+
+        console.log(choices);
+        return choices;
+    }
+}
+function getAnswerType()
+{
+    const inputType = document.querySelector('.question_input').type;
+
+    if (inputType !== 'radio' && inputType !== 'text')
+    {
+        throw new Error('Unexpected input type of: ' + inputType);
+    }
+
+    return inputType;
+}
 function getQuestionStatus(rawStatus)
 {
     if (rawStatus.includes('New Question'))
@@ -205,20 +240,20 @@ function waitCanvasLoader(selector, interval = 100, maxWait = 10000)
         setTimeout(() =>
         {
             clearInterval(checkExistence);
-            reject(new Error('Max wait of ' + maxWait + ' seconds for Canvas Loader exceeded'));
+            reject(new Error('Max wait of ' + maxWait/1000 + ' seconds for Canvas Loader exceeded'));
         }, maxWait);
     });
 }
 
 function updateInfoSheetRange()
 {
-    let splitRange = INFO_SHEET.tableRange.split('b');
+    let splitRange = G_INFO_SHEET.tableRange.split('b');
     let num = Number(splitRange[1]);
     
-    num += INFO_SHEET.rowCount;
+    num += G_INFO_SHEET.rowCount;
     num = String(num);
 
-    INFO_SHEET.tableRange = splitRange[0] + 'b' + num;
+    G_INFO_SHEET.tableRange = splitRange[0] + 'b' + num;
 }
 
 function binarySearch(key, range)

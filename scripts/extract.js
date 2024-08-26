@@ -7,7 +7,7 @@ class Extract
             let values =  [Extract.getCleanedURL(), Extract.getFANumber(), Extract.getCourseID(), Extract.getFAID(), Extract.getQuestionID()];
             let result = {};
             
-            KEYS.forEach((key, index) =>
+            G_KEYS.forEach((key, index) =>
             {
                 result[key] = values[index];
             })

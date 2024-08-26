@@ -1,7 +1,7 @@
-const KEYS = ['currURL', 'FANumber', 'courseID', 'FAID', 'questionID'];
+const G_KEYS = ['currURL', 'FANumber', 'courseID', 'FAID', 'questionID'];
 const SPREADSHEET_ID = '1Nt9_t6cTjv-J7Ej9q-b9NK8aETeB0OxEkr4eFGz_D4I';
 
-const INFO_SHEET =
+const G_INFO_SHEET =
 {
     name: 'Info',
     rowCountCell: 'e1',
@@ -10,4 +10,4 @@ const INFO_SHEET =
     tableValues: undefined,
 }
 
-let URL_INFO = undefined;
+let G_URL_INFO = undefined;
