@@ -33,7 +33,7 @@
     "content_scripts": [
         {
             "matches": ["https://feu.instructure.com/courses/*/take*"],
-            "js": ["scripts/globals.js", "scripts/utils.js", "scripts/extract.js", "scripts/sheet.js", "scripts/main.js"]
+            "js": ["scripts/globals.js", "scripts/type.js", "scripts/utils.js", "scripts/extract.js", "scripts/sheet.js", "scripts/main.js"]
         }
     ]
 }

@@ -11,3 +11,14 @@ const G_INFO_SHEET =
 }
 
 let G_URL_INFO = undefined;
+
+
+
+const QnA =
+{
+    question: undefined,
+    questionStatus: undefined,
+    tickedButton: undefined,
+    questionType: undefined,
+    choices: undefined,
+}

@@ -21,7 +21,18 @@ class Extract
         }
     }
     
-    static getFANumber() 
+    static getCleanedURL()
+    {
+        let splitUrl = window.location.href.split('/take');
+        if (splitUrl.length < 2)
+        {
+            throw new Error("URL does not contain '/questions'");
+        }
+    
+        return splitUrl[0] + '/take';
+    }
+
+    static #getFANumber() 
     {
         const header = document.querySelector('header.quiz-header');
         if (!header)
@@ -44,18 +55,7 @@ class Extract
         return Utils.sanitizeForURL(FANumber);
     }
     
-    static getCleanedURL()
-    {
-        let splitUrl = window.location.href.split('/take');
-        if (splitUrl.length < 2)
-        {
-            throw new Error("URL does not contain '/questions'");
-        }
-    
-        return splitUrl[0] + '/take';
-    }
-    
-    static getCourseID()
+    static #getCourseID()
     {
         let splitUrl = window.location.href.split('courses/');
         if (splitUrl.length < 2)
@@ -72,7 +72,7 @@ class Extract
         return splitUrl[0];
     }
     
-    static getFAID()
+    static #getFAID()
     {
         let splitURL = window.location.href.split('quizzes/');
         if (splitURL.length < 2)
@@ -89,7 +89,7 @@ class Extract
         return splitURL[0];
     }
     
-    static getQuestionID()
+    static #getQuestionID()
     {
         try
         {

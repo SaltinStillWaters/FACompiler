@@ -20,7 +20,9 @@ chrome.storage.local.get(G_KEYS)
 {
     G_URL_INFO = newURLInfo;
     console.log('Updated global var: G_URL_INFO');
-
+})
+.then(() =>
+{
     console.log("Reading row count from sheet")
     return Sheet.read(SPREADSHEET_ID, G_INFO_SHEET.name, G_INFO_SHEET.rowCountCell)
     .then(result =>
@@ -137,56 +139,89 @@ chrome.storage.local.get(G_KEYS)
 })
 .then(() =>
 {
-    let questionStatus = document.querySelector("span.question_points_holder").textContent;
-    console.log("questionStatus: ", questionStatus);
-
-    questionStatus = getQuestionStatus(questionStatus);
-    console.log("Translated question status: ", questionStatus);
+    const questionStatus = getQuestionStatus();
+    console.log("Question status: ", questionStatus);
 
     const question = document.querySelector('.question_text.user_content').textContent;
     console.log(question);
 
-    const answerType = getAnswerType();
-    console.log('Answer type: ', answerType);
+    const questionType = getInputType();
+    console.log('Question type: ', questionType);
 
-    getChoices(answerType);
+    const choices = getChoices(questionType);
+    console.log('Choices: ', choices);
+    
+    console.log(getTickedButton());
 })
 .catch((error) =>
 {
     console.error(error.message);
 });
 
-function getChoices(answerType)
+function getTickedButton()
 {
-    if (answerType === 'radio')
+    let tickedButton = -1;
+
+    const buttons = document.querySelectorAll('.question_input');
+    buttons.forEach((button, index) =>
     {
-        let choices = [];
+        if (button.checked)
+        {
+            tickedButton = index;
+        }
+    });
+
+    if (tickedButton === -1)
+    {
+        throw new Error('There is no ticked button among the choices');
+    }
+
+    return tickedButton;
+}
+
+function getChoices(inputType)
+{
+    if (inputType === Type.Input.RADIO)
+    {
+        let options = 
+        {
+            choices : [],
+            isWrongs : [],
+        }
+
         document.querySelectorAll('.answer_label')
         .forEach(div =>
         {
-            choices.push(div.textContent.slice(9, div.textContent.length - 7));
+            options.choices.push(div.textContent.slice(9, div.textContent.length - 7));
+            options.isWrongs.push(window.getComputedStyle(div).color === Type.Color.RED);
         });
 
-        console.log(choices);
-        return choices;
+        console.log(options);
+        return options;
     }
+
+    throw new Error('No choices');
 }
-function getAnswerType()
+
+function getInputType()
 {
     const inputType = document.querySelector('.question_input').type;
 
-    if (inputType !== 'radio' && inputType !== 'text')
+    if (inputType !== Type.Input.TEXT && inputType !== Type.Input.RADIO)
     {
         throw new Error('Unexpected input type of: ' + inputType);
     }
 
     return inputType;
 }
-function getQuestionStatus(rawStatus)
+
+function getQuestionStatus()
 {
+    let rawStatus = document.querySelector("span.question_points_holder").textContent;
+
     if (rawStatus.includes('New Question'))
     {
-        return 'new';
+        return Type.Question.NEW;
     }
     
     let nums = [];
@@ -207,15 +242,15 @@ function getQuestionStatus(rawStatus)
 
     if (nums[0] === nums[1])
     {
-        return 'correct';
+        return Type.Question.CORRECT;
     }
     else if (nums[0] === 0)
     {
-        return 'incorrect';
+        return Type.Question.WRONG;
     }
     else if (nums[0] < nums[1])
     {
-        return 'partially incorrect';
+        return Type.Question.PARTIAL;
     }
     else
     {
