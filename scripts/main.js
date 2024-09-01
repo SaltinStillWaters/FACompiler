@@ -1,22 +1,7 @@
-const KEYS = ['currURL', 'FANumber', 'courseID', 'FAID', 'questionID'];
-const SPREADSHEET_ID = '1Nt9_t6cTjv-J7Ej9q-b9NK8aETeB0OxEkr4eFGz_D4I';
-
-const INFO_SHEET =
-{
-    name: 'Info',
-    rowCountCell: 'e1',
-    tableRange: 'a2:b2',
-    rowCount: undefined,
-    tableValues: undefined,
-}
-
-let URL_INFO = undefined;
-
-
-chrome.storage.local.get(KEYS)
+chrome.storage.local.get(G_KEYS)
 .then(response =>
 {
-    if (response['currURL'] === getCleanedURL())
+    if (response['currURL'] === Extract.cleanedURL())
     {
         console.log('Local Data matches current URL');
         return response;
@@ -24,34 +9,40 @@ chrome.storage.local.get(KEYS)
 
     console.log('Local Data needs update');
     
-    return chrome.storage.local.set(getURLInfo())
+    return chrome.storage.local.set(Extract.URLInfo())
     .then(() =>
     {
         console.log('Local Data updated');
-        return chrome.storage.local.get(KEYS);
-    })
+        return chrome.storage.local.get(G_KEYS);
+    });
 })
 .then(newURLInfo =>
 {
-    URL_INFO = newURLInfo;
-    console.log(URL_INFO);
-    return readFromSheet(SPREADSHEET_ID, INFO_SHEET.name, INFO_SHEET.rowCountCell)
+    G_URL_INFO = newURLInfo;
+    console.log('Updated global var: G_URL_INFO');
+})
+.then(() =>
+{
+    console.log("Reading row count from sheet")
+    return Sheet.read(SPREADSHEET_ID, G_INFO_SHEET.name, G_INFO_SHEET.rowCountCell)
     .then(result =>
     {
-        INFO_SHEET.rowCount =  Number(result[0][0]);
+        G_INFO_SHEET.rowCount =  Number(result[0][0]);
+        console.log('Row count: ', G_INFO_SHEET.rowCount);
+
         return Promise.resolve();
     })
 })
 .then(() =>
 {
-    if (INFO_SHEET.rowCount === 0)
+    if (G_INFO_SHEET.rowCount === 0)
     {
         return Promise.resolve();
     }
 
     updateInfoSheetRange();
 
-    return readFromSheet(SPREADSHEET_ID, INFO_SHEET.name, INFO_SHEET.tableRange)
+    return Sheet.read(SPREADSHEET_ID, G_INFO_SHEET.name, G_INFO_SHEET.tableRange)
     .then(result =>
     {
         result = result.map(row =>
@@ -62,7 +53,7 @@ chrome.storage.local.get(KEYS)
             })
         );
 
-        INFO_SHEET.tableValues = result;
+        G_INFO_SHEET.tableValues = result;
         return Promise.resolve();
     })
 })
@@ -74,22 +65,21 @@ chrome.storage.local.get(KEYS)
         indexToInsert: undefined,
     };
 
-    if (INFO_SHEET.rowCount === 0)
+    if (G_INFO_SHEET.rowCount === 0)
     {
         result.indexToInsert = 1;
         return result
     }
 
-
-    const key = Number(URL_INFO['FAID']);
-    let index = binarySearch(key, INFO_SHEET.tableValues);
+    const key = Number(G_URL_INFO['FAID']);
+    let index = binarySearch(key, G_INFO_SHEET.tableValues);
     
 
-    if (INFO_SHEET.tableValues[index][0]  === key)
+    if (G_INFO_SHEET.tableValues[index][0]  === key)
     {
         result.createSheet = false;
     }
-    else if (key > INFO_SHEET.tableValues[index][0])
+    else if (key > G_INFO_SHEET.tableValues[index][0])
     {
         index++;
     }
@@ -101,59 +91,95 @@ chrome.storage.local.get(KEYS)
 {
     if (result.createSheet)
     {
-        console.log(`Sheet ${URL_INFO['FAID']} does not exists`);
-        console.log(`Creating sheet ${URL_INFO['FAID']}`);
+        console.log(`Sheet ${G_URL_INFO['FAID']} does not exists`);
+        console.log(`Creating sheet ${G_URL_INFO['FAID']}`);
     
-        return createSheet(SPREADSHEET_ID, URL_INFO["FANumber"])
+        return Sheet.create(SPREADSHEET_ID, G_URL_INFO["FANumber"])
         .then(newSheet =>
         {
             if (newSheet)
             {
-                console.log(`Sheet: ${URL_INFO['FANumber']} created`);
-                return initSheet(SPREADSHEET_ID, URL_INFO['FANumber']);
+                console.log(`Sheet: ${G_URL_INFO['FANumber']} created`);
+                return initSheet(SPREADSHEET_ID, G_URL_INFO['FANumber']);
             }
             else
             {
-                return Promise.reject('Failed to create new Sheet: ', URL_INFO['FANumber']);
+                return Promise.reject('Failed to create new Sheet: ', G_URL_INFO['FANumber']);
             }
         })
         .then(initResponse =>
         {
             if (initResponse)
             {
-                console.log("Sheet: ", URL_INFO['FANumber'], ' initialized');
-                return insertRowToSheet(SPREADSHEET_ID, INFO_SHEET.name, result.indexToInsert, [URL_INFO['FAID'], URL_INFO['FANumber']]);
+                console.log("Sheet: ", G_URL_INFO['FANumber'], ' initialized');
+                return Sheet.insertRow(SPREADSHEET_ID, G_INFO_SHEET.name, result.indexToInsert, [G_URL_INFO['FAID'], G_URL_INFO['FANumber']])
+                .then(() =>
+                {
+                    return Sheet.write(SPREADSHEET_ID, G_INFO_SHEET.name, G_INFO_SHEET.rowCountCell, [[G_INFO_SHEET.rowCount + 1]]);
+                });
             }
             else
             {
-                console.log("Sheet: ", URL_INFO['FANumber'], ' not initialized');
+                console.log("Sheet: ", G_URL_INFO['FANumber'], ' not initialized');
                 return Promise.reject();
             }
         })
     }   
-
 })
 .then(() =>
 {
-    console.log(INFO_SHEET);
-    return writeToSheet(SPREADSHEET_ID, INFO_SHEET.name, INFO_SHEET.rowCountCell, [[INFO_SHEET.rowCount + 1]]);
+    console.log('Waiting for Canvas Loader to load');
+
+    return waitCanvasLoader("span.points.question_points")
+    .then(() =>
+    {
+        console.log('Canvas Loader loaded successfully');
+        return Promise.resolve();
+    })
+})
+.then(() =>
+{
+    Extract.QnAInfo();
 })
 .catch((error) =>
 {
-    console.error(error);
+    console.error(error.message);
 });
 
 
+function waitCanvasLoader(selector, interval = 100, maxWait = 10000)
+{
+    return new Promise((resolve, reject) =>
+    {
+        const checkExistence = setInterval(() =>
+        {
+            const element = document.querySelector(selector);
+            if (!element)
+            {
+                clearInterval(checkExistence);
+                resolve();
+            }
+        }, interval);
+        
+        setTimeout(() =>
+        {
+            clearInterval(checkExistence);
+            reject(new Error('Max wait of ' + maxWait/1000 + ' seconds for Canvas Loader exceeded'));
+        }, maxWait);
+    });
+}
+
 function updateInfoSheetRange()
 {
-    let splitRange = INFO_SHEET.tableRange.split('b');
+    let splitRange = G_INFO_SHEET.tableRange.split('b');
     let num = Number(splitRange[1]);
     
-    num += INFO_SHEET.rowCount;
+    num += G_INFO_SHEET.rowCount;
     num = String(num);
 
-    INFO_SHEET.tableRange = splitRange[0] + 'b' + num;
+    G_INFO_SHEET.tableRange = splitRange[0] + 'b' + num;
 }
+
 function binarySearch(key, range)
 {
     let left = 0;
@@ -181,243 +207,7 @@ function binarySearch(key, range)
     return mid;
 }
 
-function insertRowToSheet(spreadsheetID, sheetName, rowIndex, rowData)
-{
-    return new Promise((resolve, reject) =>
-    {
-        chrome.runtime.sendMessage(
-            {
-                action: 'insertRowToSheet',
-                spreadsheetID: spreadsheetID,
-                sheetName: sheetName,
-                rowIndex: rowIndex,
-                rowData: rowData
-            },
-            response =>
-            {
-                if (response.error)
-                {
-                    reject(response.error);
-                }
-                else
-                {
-                    resolve(response.result);
-                }
-            });
-    });
-}
-
-function readFromSheet(spreadsheetID, sheetName, range)
-{
-    return new Promise((resolve, reject) =>
-    {
-        chrome.runtime.sendMessage(
-            {
-                action: 'readFromSheet',
-                spreadsheetID: spreadsheetID,
-                sheetName: sheetName,
-                range: range
-            },
-            response =>
-            {
-                if (response.error)
-                {
-                    reject(response.error);
-                }
-                else
-                {
-                    resolve(response.result);
-                }
-            });
-    });
-}
-
 function initSheet(spreadsheetID, sheetName)
 {
-    return writeToSheet(spreadsheetID, sheetName, 'A1:G1', [['QUESTIONS', 'CHOICES', 'ANSWERS', 'WRONG ANSWERS', null , 'TOTAL QUESTIONS:', 0]]);
+    return Sheet.write(spreadsheetID, sheetName, 'A1:G1', [['QUESTIONS', 'CHOICES', 'ANSWERS', 'WRONG ANSWERS', null , 'TOTAL QUESTIONS:', 0]]);
 }
-
-function writeToSheet(spreadsheetID, sheetName, range, values)
-{
-    return new Promise((resolve, reject) =>
-    {
-        chrome.runtime.sendMessage(
-            {
-                action: 'writeToSheet',
-                spreadsheetID: spreadsheetID,
-                sheetName: sheetName,
-                range: range,
-                values: values
-            },
-            response =>
-            {
-                if (response.error)
-                {
-                    reject(response.error);
-                }
-                else
-                {
-                    resolve(response.result);
-                }
-            });
-    });
-}
-
-function createSheet(spreadsheetID, sheetName)
-{
-    return new Promise((resolve, reject) =>
-    {
-        chrome.runtime.sendMessage(
-        {
-            action: 'createSheet',
-            spreadsheetID: spreadsheetID,
-            sheetName: sheetName
-        },
-        response =>
-        {
-            if (response.error)
-            {
-                reject(response.error);
-            }
-            else
-            {
-                resolve(response.result);
-            }
-        });
-    });
-}
-
-// function checkSheetExists(spreadsheetID, sheetName)
-// {
-//     return new Promise((resolve, reject) =>
-//     {
-//         chrome.runtime.sendMessage(
-//         {
-//                 action: 'checkSheetExists',
-//                 spreadsheetID: spreadsheetID,
-//                 sheetName: sheetName
-//         },
-//         response =>
-//         {
-//             if (response.error)
-//             {
-//                 reject(response.error);
-//             }
-//             else
-//             {
-//                 resolve(response.exists);
-//             }
-//         });
-//     });
-// }
-
-//EXTRACT
-function getURLInfo()
-{
-    try
-    {
-        let values =  [getCleanedURL(), getFANumber(), getCourseID(), getFAID(), getQuestionID()];
-        let result = {};
-        
-        KEYS.forEach((key, index) =>
-        {
-            result[key] = values[index];
-        })
-
-        return result;
-    }
-    catch (error)
-    {
-        console.error('Error in getURLInfo(): ', error);
-        return null;
-    }
-}
-
-function getFANumber() 
-{
-    const header = document.querySelector('header.quiz-header');
-    if (!header)
-    {
-        throw new Error("'header.quiz-header' not found");
-    }
-
-    const h1 = header.querySelector('h1');
-    if (!h1)
-    {
-        throw new Error("'h1' not found");
-    }
-
-    const FANumber = h1.textContent;
-    if (!FANumber)
-    {
-        throw new Error("'FANumber' not found or empty");
-    }
-
-    return FANumber;
-}
-
-function getCleanedURL()
-{
-    let splitUrl = window.location.href.split('/take');
-    if (splitUrl.length < 2)
-    {
-        throw new Error("URL does not contain '/questions'");
-    }
-
-    return splitUrl[0] + '/take';
-}
-
-//catches Error and returns null so it the cell will remain blank
-function getCourseID()
-{
-    let splitUrl = window.location.href.split('courses/');
-    if (splitUrl.length < 2)
-    {
-        throw new Error("URL does not contain 'courses/'");
-    }
-
-    splitUrl = splitUrl[1].split('/quizzes');
-    if (splitUrl.length < 2)
-    {
-        throw new Error("URL does not contain '/quizzes'");
-    }
-
-    return splitUrl[0];
-}
-
-function getFAID()
-{
-    let splitURL = window.location.href.split('quizzes/');
-    if (splitURL.length < 2)
-    {
-        throw new Error("URL does not contain 'quizzes/'");
-    }
-    
-    splitURL = splitURL[1].split('/');
-    if (splitURL.length < 2)
-    {
-        throw new Error("URL does not contain '/'");
-    }
-
-    return splitURL[0];
-}
-
-function getQuestionID()
-{
-    try
-    {
-        let splitUrl = window.location.href.split('questions/');
-        if (splitUrl.length < 2)
-        {
-            throw new Error("URL does not contain 'questions/'");
-        }
-
-        return splitUrl[1];
-    }
-    catch (error)
-    {
-        console.error("Error in getting getQuestionsID(): ", error);
-        return null;
-    }
-}
-//END EXTRACT
