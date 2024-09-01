@@ -140,6 +140,12 @@ chrome.storage.local.get(G_KEYS)
 .then(() =>
 {
     Extract.QnAInfo();
+
+    const sheet = CurrSheet.getInstance();
+    return sheet.init();
+})
+.then(() =>
+{
 })
 .catch((error) =>
 {
