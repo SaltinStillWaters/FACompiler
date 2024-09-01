@@ -1,7 +1,7 @@
 chrome.storage.local.get(G_KEYS)
 .then(response =>
 {
-    if (response['currURL'] === Extract.getCleanedURL())
+    if (response['currURL'] === Extract.cleanedURL())
     {
         console.log('Local Data matches current URL');
         return response;
@@ -9,7 +9,7 @@ chrome.storage.local.get(G_KEYS)
 
     console.log('Local Data needs update');
     
-    return chrome.storage.local.set(Extract.getURLInfo())
+    return chrome.storage.local.set(Extract.URLInfo())
     .then(() =>
     {
         console.log('Local Data updated');
@@ -139,124 +139,13 @@ chrome.storage.local.get(G_KEYS)
 })
 .then(() =>
 {
-    const questionStatus = getQuestionStatus();
-    console.log("Question status: ", questionStatus);
-
-    const question = document.querySelector('.question_text.user_content').textContent;
-    console.log(question);
-
-    const questionType = getInputType();
-    console.log('Question type: ', questionType);
-
-    const choices = getChoices(questionType);
-    console.log('Choices: ', choices);
-    
-    console.log(getTickedButton());
+    Extract.QnAInfo();
 })
 .catch((error) =>
 {
     console.error(error.message);
 });
 
-function getTickedButton()
-{
-    let tickedButton = -1;
-
-    const buttons = document.querySelectorAll('.question_input');
-    buttons.forEach((button, index) =>
-    {
-        if (button.checked)
-        {
-            tickedButton = index;
-        }
-    });
-
-    if (tickedButton === -1)
-    {
-        throw new Error('There is no ticked button among the choices');
-    }
-
-    return tickedButton;
-}
-
-function getChoices(inputType)
-{
-    if (inputType === Type.Input.RADIO)
-    {
-        let options = 
-        {
-            choices : [],
-            isWrongs : [],
-        }
-
-        document.querySelectorAll('.answer_label')
-        .forEach(div =>
-        {
-            options.choices.push(div.textContent.slice(9, div.textContent.length - 7));
-            options.isWrongs.push(window.getComputedStyle(div).color === Type.Color.RED);
-        });
-
-        console.log(options);
-        return options;
-    }
-
-    throw new Error('No choices');
-}
-
-function getInputType()
-{
-    const inputType = document.querySelector('.question_input').type;
-
-    if (inputType !== Type.Input.TEXT && inputType !== Type.Input.RADIO)
-    {
-        throw new Error('Unexpected input type of: ' + inputType);
-    }
-
-    return inputType;
-}
-
-function getQuestionStatus()
-{
-    let rawStatus = document.querySelector("span.question_points_holder").textContent;
-
-    if (rawStatus.includes('New Question'))
-    {
-        return Type.Question.NEW;
-    }
-    
-    let nums = [];
-
-    let split = rawStatus.split(' ');
-    for(let x = 0; x < split.length; ++x)
-    {
-        if (!isNaN(Number(split[x])))
-        {
-            nums.push(Number(split[x]));
-        }
-    }
-
-    if (nums.length !== 2)
-    {
-        throw new Error('Unexpected Question Status: Does not contain exactly 2 numbers');
-    }
-
-    if (nums[0] === nums[1])
-    {
-        return Type.Question.CORRECT;
-    }
-    else if (nums[0] === 0)
-    {
-        return Type.Question.WRONG;
-    }
-    else if (nums[0] < nums[1])
-    {
-        return Type.Question.PARTIAL;
-    }
-    else
-    {
-        throw new Error('Unexpected Question Status');
-    }
-}
 
 function waitCanvasLoader(selector, interval = 100, maxWait = 10000)
 {
