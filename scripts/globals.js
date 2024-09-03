@@ -5,14 +5,12 @@ const G_INFO_SHEET =
 {
     name: 'Info',
     rowCountCell: 'e1',
-    tableRange: 'a2:b2',
+    tableRange: 'a2:a2',
     rowCount: undefined,
     tableValues: undefined,
 }
 
 let G_URL_INFO = undefined;
-
-
 
 const QnA =
 {
@@ -22,3 +20,10 @@ const QnA =
     questionType: undefined,
     choices: undefined,
 }
+
+const SEARCH = Object.freeze(
+{
+    DEFAULT: 0,
+    FIRST: 1,
+    LAST: 2,
+});

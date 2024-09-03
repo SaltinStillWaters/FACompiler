@@ -40,19 +40,23 @@ chrome.storage.local.get(G_KEYS)
         return Promise.resolve();
     }
 
+    console.log('Updating info sheet range');
     updateInfoSheetRange();
+    console.log('Updated info sheet range');
 
     return Sheet.read(SPREADSHEET_ID, G_INFO_SHEET.name, G_INFO_SHEET.tableRange)
     .then(result =>
     {
+        console.log('Extracting table from info sheet');
         result = result.map(row =>
             row.map(val =>
-            {
-                num = parseInt(val);
-                return isNaN(num) ? val : num;
-            })
-        );
-
+                {
+                    num = parseInt(val);
+                    return isNaN(num) ? val : num;
+                })
+            );
+            
+        console.log('Extracted table from info sheet');
         G_INFO_SHEET.tableValues = result;
         return Promise.resolve();
     })
@@ -72,9 +76,9 @@ chrome.storage.local.get(G_KEYS)
     }
 
     const key = Number(G_URL_INFO['FAID']);
-    let index = binarySearch(key, G_INFO_SHEET.tableValues);
-    
+    let index = binarySearch(G_INFO_SHEET.tableValues, key);
 
+    console.log({G_INFO_SHEET, index});
     if (G_INFO_SHEET.tableValues[index][0]  === key)
     {
         result.createSheet = false;
@@ -149,7 +153,7 @@ chrome.storage.local.get(G_KEYS)
 })
 .catch((error) =>
 {
-    console.error(error.message);
+    console.error(error);
 });
 
 
@@ -177,40 +181,13 @@ function waitCanvasLoader(selector, interval = 100, maxWait = 10000)
 
 function updateInfoSheetRange()
 {
-    let splitRange = G_INFO_SHEET.tableRange.split('b');
+    let splitRange = G_INFO_SHEET.tableRange.split(':a');
     let num = Number(splitRange[1]);
     
-    num += G_INFO_SHEET.rowCount;
+    num += G_INFO_SHEET.rowCount - 1;
     num = String(num);
 
-    G_INFO_SHEET.tableRange = splitRange[0] + 'b' + num;
-}
-
-function binarySearch(key, range)
-{
-    let left = 0;
-    let right = range.length - 1;
-
-    console.log(key, range);
-    while(left <= right)
-    {
-        mid = Math.floor((left + right) / 2);
-        
-        if (key < range[mid][0])
-        {
-            right = mid - 1;
-        }
-        else if (key > range[mid][0])
-        {
-            left = mid + 1;
-        }
-        else
-        {
-            return mid;
-        }
-    }
-
-    return mid;
+    G_INFO_SHEET.tableRange = splitRange[0] + ':a' + num;
 }
 
 function initSheet(spreadsheetID, sheetName)
