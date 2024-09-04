@@ -1,18 +1,19 @@
-const G_KEYS = ['currURL', 'FANumber', 'courseID', 'FAID', 'questionID'];
 const SPREADSHEET_ID = '1Nt9_t6cTjv-J7Ej9q-b9NK8aETeB0OxEkr4eFGz_D4I';
+const G_KEYS = ['currURL', 'FANumber', 'courseID', 'FAID', 'questionID'];
+
+const G_ROW_START = 2;
 
 const G_INFO_SHEET =
 {
     name: 'Info',
-    rowCountCell: 'e1',
-    tableRange: 'a2:a2',
-    rowCount: undefined,
+    rowCountCell: 'E1',
+    tableColumn: 'A',
     tableValues: undefined,
 }
 
 let G_URL_INFO = undefined;
 
-const QnA =
+let QnA =
 {
     question: undefined,
     questionStatus: undefined,

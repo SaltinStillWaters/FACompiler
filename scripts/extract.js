@@ -246,7 +246,7 @@ class Extract
             let splitUrl = window.location.href.split('questions/');
             if (splitUrl.length < 2)
             {
-                throw new Error("URL does not contain 'questions/'");
+                // throw new Error("URL does not contain 'questions/'");
             }
     
             return splitUrl[1];

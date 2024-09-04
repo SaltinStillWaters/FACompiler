@@ -1,53 +1,57 @@
 chrome.storage.local.get(G_KEYS)
-.then(response =>
-{
-    if (response['currURL'] === Extract.cleanedURL())
+.then(localData =>
+{// get/update local storage
+    if (localData['currURL'] === Extract.cleanedURL())
     {
-        console.log('Local Data matches current URL');
-        return response;
+        return G_URL_INFO = localData;
     }
-
-    console.log('Local Data needs update');
     
-    return chrome.storage.local.set(Extract.URLInfo())
-    .then(() =>
-    {
-        console.log('Local Data updated');
-        return chrome.storage.local.get(G_KEYS);
-    });
-})
-.then(newURLInfo =>
-{
-    G_URL_INFO = newURLInfo;
-    console.log('Updated global var: G_URL_INFO');
+    console.log('Local Data needs update. Updating...');
+
+    G_URL_INFO = Extract.URLInfo();
+    return chrome.storage.local.set(G_URL_INFO);
 })
 .then(() =>
-{
-    console.log("Reading row count from sheet")
+{// get row count of Info Sheet
+    console.log("Reading row count from: 'Info Sheet'...");
+
     return Sheet.read(SPREADSHEET_ID, G_INFO_SHEET.name, G_INFO_SHEET.rowCountCell)
     .then(result =>
     {
-        G_INFO_SHEET.rowCount =  Number(result[0][0]);
-        console.log('Row count: ', G_INFO_SHEET.rowCount);
-
-        return Promise.resolve();
+        return Number(result[0][0]);
     })
 })
-.then(() =>
-{
-    if (G_INFO_SHEET.rowCount === 0)
+.then(rowCount =>
+{// init info var to be used by subsequent API calls
+    let info = 
     {
-        return Promise.resolve();
+        createSheet: true,
+        indexToInsert: undefined,
+        rowCount: rowCount,
+        range: undefined,
+    };
+
+    if (rowCount === 0)
+    {// no need to search where to insert. Just insert at 1st row
+        info.indexToInsert = 1;
+    }
+    
+    return info;
+})
+.then(info =>
+{// generate table to know which row to insert
+    if (info.rowCount === 0)
+    {// no need to search where to insert. Just insert at 1st row
+        return info;
     }
 
-    console.log('Updating info sheet range');
-    updateInfoSheetRange();
-    console.log('Updated info sheet range');
-
-    return Sheet.read(SPREADSHEET_ID, G_INFO_SHEET.name, G_INFO_SHEET.tableRange)
+    range = Utils.computeRange(G_INFO_SHEET.tableColumn, G_ROW_START, info.rowCount);
+    
+    return Sheet.read(SPREADSHEET_ID, G_INFO_SHEET.name, range)
     .then(result =>
     {
-        console.log('Extracting table from info sheet');
+        console.log('Extracting table from Info Sheet...');
+
         result = result.map(row =>
             row.map(val =>
                 {
@@ -56,44 +60,36 @@ chrome.storage.local.get(G_KEYS)
                 })
             );
             
-        console.log('Extracted table from info sheet');
-        G_INFO_SHEET.tableValues = result;
-        return Promise.resolve();
-    })
+        info.table = result;
+        return info;
+    });
 })
-.then(() =>
-{
-    let result = 
-    {
-        createSheet: true,
-        indexToInsert: undefined,
-    };
-
-    if (G_INFO_SHEET.rowCount === 0)
-    {
-        result.indexToInsert = 1;
-        return result
+.then(info =>
+{// get index to insert at
+    if (info.rowCount === 0)
+    {// no need to search where to insert. Just insert at 1st row
+        return info;
     }
 
     const key = Number(G_URL_INFO['FAID']);
-    let index = binarySearch(G_INFO_SHEET.tableValues, key);
+    let index = binarySearch(info.table, key).lastMid;
 
-    console.log({G_INFO_SHEET, index});
-    if (G_INFO_SHEET.tableValues[index][0]  === key)
+    console.log({G_INFO_SHEET, index, key});
+    if (info.table[index][0] === key)
     {
-        result.createSheet = false;
+        info.createSheet = false;
     }
-    else if (key > G_INFO_SHEET.tableValues[index][0])
+    else if (key > info.table[index][0])
     {
         index++;
     }
 
-    result.indexToInsert = index + 1; //+1 because row 1 is the header
-    return result; 
+    info.indexToInsert = index + 1; //+1 because data starts at row 2
+    return info; 
 })
-.then(result =>
-{
-    if (result.createSheet)
+.then(info =>
+{// creates sheet if it does not exist and initializes it
+    if (info.createSheet)
     {
         console.log(`Sheet ${G_URL_INFO['FAID']} does not exists`);
         console.log(`Creating sheet ${G_URL_INFO['FAID']}`);
@@ -116,10 +112,10 @@ chrome.storage.local.get(G_KEYS)
             if (initResponse)
             {
                 console.log("Sheet: ", G_URL_INFO['FANumber'], ' initialized');
-                return Sheet.insertRow(SPREADSHEET_ID, G_INFO_SHEET.name, result.indexToInsert, [G_URL_INFO['FAID'], G_URL_INFO['FANumber']])
+                return Sheet.insertRow(SPREADSHEET_ID, G_INFO_SHEET.name, info.indexToInsert, [G_URL_INFO['FAID'], G_URL_INFO['FANumber']])
                 .then(() =>
                 {
-                    return Sheet.write(SPREADSHEET_ID, G_INFO_SHEET.name, G_INFO_SHEET.rowCountCell, [[G_INFO_SHEET.rowCount + 1]]);
+                    return Sheet.write(SPREADSHEET_ID, G_INFO_SHEET.name, G_INFO_SHEET.rowCountCell, [[info.rowCount + 1]]);
                 });
             }
             else
@@ -132,7 +128,7 @@ chrome.storage.local.get(G_KEYS)
 })
 .then(() =>
 {
-    console.log('Waiting for Canvas Loader to load');
+    console.log('Waiting for Canvas Loader to load...');
 
     return waitCanvasLoader("span.points.question_points")
     .then(() =>
@@ -143,13 +139,14 @@ chrome.storage.local.get(G_KEYS)
 })
 .then(() =>
 {
-    Extract.QnAInfo();
+    QnA = Extract.QnAInfo();
 
-    const sheet = CurrSheet.getInstance();
-    return sheet.init();
+    return Promise.resolve();
 })
 .then(() =>
 {
+    const sheet = CurrSheet.getInstance();
+    return sheet.init();
 })
 .catch((error) =>
 {
@@ -177,17 +174,6 @@ function waitCanvasLoader(selector, interval = 100, maxWait = 10000)
             reject(new Error('Max wait of ' + maxWait/1000 + ' seconds for Canvas Loader exceeded'));
         }, maxWait);
     });
-}
-
-function updateInfoSheetRange()
-{
-    let splitRange = G_INFO_SHEET.tableRange.split(':a');
-    let num = Number(splitRange[1]);
-    
-    num += G_INFO_SHEET.rowCount - 1;
-    num = String(num);
-
-    G_INFO_SHEET.tableRange = splitRange[0] + ':a' + num;
 }
 
 function initSheet(spreadsheetID, sheetName)
