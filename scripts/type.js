@@ -41,7 +41,7 @@ class CurrSheet
     static #userWrongAnswerRange = 'D';
     static #userWrongAnswerValue = null;
 
-    static #choiceRange = 'O';
+    static #choiceRange = 'Z';
     static #choiceValue = null;
 
     static #wrongAnswerRange = 'P';
@@ -89,6 +89,28 @@ class CurrSheet
         .then(() =>
         {
             return Sheet.read(SPREADSHEET_ID, CurrSheet.#name, CurrSheet.#questionRange)
+            .then(output =>
+            {
+                CurrSheet.#questionValue = output;
+                const firstIndex = binarySearch(output, 'b', SEARCH.FIRST);
+                const lastIndex = binarySearch(output, 'b', SEARCH.LAST);
+
+                console.log({firstIndex, lastIndex});
+
+                CurrSheet.#choiceRange += (2 + firstIndex) + ':' + CurrSheet.#choiceRange + (2 + lastIndex);
+                console.log(CurrSheet.#choiceRange);
+
+                let indices = 
+                {
+                    first: firstIndex,
+                    last: lastIndex,
+                }
+                return indices;
+            })
+        })
+        .then(indeces =>
+        {
+            return Sheet.read(SPREADSHEET_ID, CurrSheet.#name, CurrSheet.#choiceRange)
             .then(output =>
             {
                 console.log(output);
