@@ -40,6 +40,7 @@ class Extract
             question: undefined,
             inputType: undefined,
             choices: undefined,
+            wrongs: undefined,
             prevAnswer: undefined,
         }
 
@@ -48,7 +49,11 @@ class Extract
             QnA.questionStatus = Extract.#questionStatus();
             QnA.question = Extract.#question();
             QnA.inputType = Extract.#inputType();
-            QnA.choices = Extract.#choices(QnA.inputType);
+
+            QnA.choices = Extract.#choices(QnA.inputType); //returns an Object {choices, isWrongs}
+            QnA.wrongs = QnA.choices.isWrongs;
+            QnA.choices = QnA.choices.choices;
+
             QnA.prevAnswer = Extract.#prevAnswer(QnA.inputType, QnA.choices);
 
             console.log('QnA Info: ', QnA);
@@ -72,7 +77,7 @@ class Extract
                 return -1;
             }
 
-            return choices.choices[checkedButton];
+            return choices[checkedButton];
         }
         else if (inputType === Type.Input.TEXT)
         {
@@ -152,15 +157,16 @@ class Extract
             document.querySelectorAll('.answer_label')
             .forEach(div =>
             {
-                options.choices.push(div.textContent.slice(9, div.textContent.length - 7)); //indices (0 to 9) and (length - 7 to length) are whitespaces
-                options.isWrongs.push(window.getComputedStyle(div).color === Type.Color.RED);
+                const choice = div.textContent.slice(9, div.textContent.length - 7);
+                options.choices.push(choice); //indices (0 to 9) and (length - 7 to length) are whitespaces
+                options.isWrongs.push(window.getComputedStyle(div).color === Type.Color.RED ? choice : '');
             });
 
             return options;
         }
         else if (inputType === Type.Input.TEXT)
         {
-            return -1;
+            return '';
         }
         
         throw new Error('No choices');

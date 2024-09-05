@@ -23,7 +23,7 @@
     },
     
     "oauth2": {
-        "client_id": "577911638183-b574jsmcv4t4vtpppigj4eteql47idoe.apps.googleusercontent.com",
+        "client_id": "577911638183-0h83q92rpudsfip6hvgs0prt8o6jb82t.apps.googleusercontent.com",
         "scopes": [
             "https://www.googleapis.com/auth/spreadsheets",
             "https://www.googleapis.com/auth/spreadsheets.readonly"
@@ -33,7 +33,7 @@
     "content_scripts": [
         {
             "matches": ["https://feu.instructure.com/courses/*/take*"],
-            "js": ["scripts/globals.js", "scripts/type.js", "scripts/utils.js", "scripts/extract.js", "scripts/sheet.js", "scripts/currSheet.js", "scripts/main.js"]
+            "js": ["scripts/globals.js", "scripts/type.js", "scripts/utils.js", "scripts/extract.js", "scripts/sheet.js", "scripts/currSheet.js", "scripts/drivers/init.js", "scripts/main.js"]
         }
     ]
 }

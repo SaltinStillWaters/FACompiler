@@ -27,6 +27,8 @@ function binarySearch(arr, toFind, criteria = SEARCH.DEFAULT)
         const mid = Math.floor((left + right) / 2);
         const arrValue = Array.isArray(arr[mid]) ? arr[mid][0] : arr[mid];
         
+        console.log({toFind, arrValue});
+        
         result.lastMid = mid;
 
         if (toFind > arrValue)

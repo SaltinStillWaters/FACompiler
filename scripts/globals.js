@@ -15,12 +15,15 @@ let G_URL_INFO = undefined;
 
 let QnA =
 {
-    question: undefined,
     questionStatus: undefined,
-    tickedButton: undefined,
-    questionType: undefined,
+    question: undefined,
+    inputType: undefined,
     choices: undefined,
+    wrongs: undefined,
+    prevAnswer: undefined,
 }
+
+const G_DELIMITER = '**EOF**';
 
 const SEARCH = Object.freeze(
 {
