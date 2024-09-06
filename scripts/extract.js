@@ -56,7 +56,6 @@ class Extract
 
             QnA.prevAnswer = Extract.#prevAnswer(QnA.inputType, QnA.choices);
 
-            console.log('QnA Info: ', QnA);
             return QnA;
         }
         catch (error)

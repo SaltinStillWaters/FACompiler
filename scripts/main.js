@@ -13,6 +13,10 @@ const updateQnAPromise = waitCanvasLoader("span.points.question_points")
         rowCountCell: 'G1',
         rowCount: undefined,
         questionColumn: 'A',
+        choiceColumn: 'E',
+        choicesRange: undefined,
+        firstQuestionMatchIndex: undefined,
+        QnAMatchIndex: undefined,
         rowToInsert: -1,
     }
 
@@ -40,28 +44,63 @@ const updateQnAPromise = waitCanvasLoader("span.points.question_points")
     return Sheet.read(SPREADSHEET_ID, sheet.name, questionsRange)
     .then(output =>
     {
-        //bypass if rowCount is 0 just like driver.init.js
-        const firstIndex = binarySearch(output, QnA.question, SEARCH.FIRST);
-        const lastIndex = binarySearch(output, QnA.question, SEARCH.LAST);
+        const first = binarySearch(output, QnA.question, SEARCH.FIRST);
+        const last = binarySearch(output, QnA.question, SEARCH.LAST);
         
-        console.log({firstIndex, lastIndex, output});
+        console.log(first, last, output, QnA.question);
         
-        let indices = 
+        if (!first.isFound)
         {
-            first: firstIndex,
-            last: lastIndex,
+            sheet.rowToInsert = first.index + G_ROW_START - 1;
         }
-        return indices;
+        else
+        {
+            sheet.firstQuestionMatchIndex = first.index;
+            sheet.choicesRange = Utils.computeRange(sheet.choiceColumn, G_ROW_START + first.index, last.index - first.index);
+        }
+
+        return sheet;
     })
 })
 .then(sheet =>
 {// check if choices match
-    return sheet;
+    if (sheet.rowToInsert !== -1)
+    {
+        return sheet;
+    }
+
+    return Sheet.read(SPREADSHEET_ID, sheet.name, sheet.choicesRange)
+    .then(output =>
+    {
+        for (let x = 0; x < output.length; ++x)
+        {
+            const sheetChoice = backEndToStr(output[x][0]);
+            const canvasChoice = arrToStr(QnA.choices);
+
+            console.log({sheetChoice, canvasChoice});
+            if (sheetChoice.length !== canvasChoice.length)
+            {
+                continue;
+            }
+
+            if (sheetChoice === canvasChoice)
+            {
+                sheet.QnAMatchIndex = sheet.firstQuestionMatchIndex + x + G_ROW_START - 1;
+                break;
+            }
+        }
+
+        return sheet;
+    });
 })
 .then(sheet =>
 {
-    console.log('insertRow');
-    return insertQuestion(sheet, QnA);
+    console.log(sheet);
+    if (sheet.rowToInsert !== -1)
+    {
+        console.log('insertRow');
+        return insertQuestion(sheet, QnA);
+    }
 })
 .catch((error) =>
 {
@@ -71,16 +110,20 @@ const updateQnAPromise = waitCanvasLoader("span.points.question_points")
 function insertQuestion(sheetInfo, QnA)
 {
     const answer = QnA.questionStatus === Type.Question.CORRECT ? QnA.prevAnswer : undefined;
-    const userChoice = unpackForUser(QnA.choices);
-    const userWrongs = unpackForUser(QnA.wrongs);
-    const backEndChoice = unpackForBackEnd(QnA.choices);
-    const backEndWrongs = unpackForBackEnd(QnA.wrongs);
+    const userChoice = arrToUser(QnA.choices);
+    const userWrongs = arrToUser(QnA.wrongs);
+    const backEndChoice = arrToBackEnd(QnA.choices);
+    const backEndWrongs = arrToBackEnd(QnA.wrongs);
 
     //user side
-    return Sheet.insertRow(SPREADSHEET_ID, sheetInfo.name, sheetInfo.rowToInsert, [QnA.question, userChoice, answer, userWrongs, backEndChoice, backEndWrongs]);
+    return Sheet.insertRow(SPREADSHEET_ID, sheetInfo.name, sheetInfo.rowToInsert, [QnA.question, userChoice, answer, userWrongs, backEndChoice, backEndWrongs])
+    .then(() =>
+    {
+        return Sheet.write(SPREADSHEET_ID, sheetInfo.name, sheetInfo.rowCountCell, [[sheetInfo.rowCount + 1]]);
+    });
 }
 
-function unpackForUser(arr)
+function arrToUser(arr)
 {
     if (!Array.isArray(arr))
     {
@@ -99,7 +142,7 @@ function unpackForUser(arr)
     return str.trimEnd();
 }
 
-function unpackForBackEnd(arr)
+function arrToBackEnd(arr)
 {
     if (!Array.isArray(arr))
     {
@@ -117,6 +160,24 @@ function unpackForBackEnd(arr)
 
     return str;
 }
+
+function backEndToStr(backEnd)
+{
+    const escapedDelimiter = G_DELIMITER.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    return backEnd.replace(new RegExp(escapedDelimiter, 'g'), '');
+}
+
+function arrToStr(arr)
+{
+    let str = '';
+    arr.forEach(x =>
+    {
+        str += x;
+    });
+
+    return str;
+}
+
 function waitCanvasLoader(selector, interval = 100, maxWait = 10000)
 {
     return new Promise((resolve, reject) =>

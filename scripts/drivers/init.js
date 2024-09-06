@@ -75,7 +75,7 @@ const initSheetPromise = chrome.storage.local.get(G_KEYS)
     }
 
     const key = Number(G_URL_INFO['FAID']);
-    let index = binarySearch(info.table, key).lastMid;
+    let index = binarySearch(info.table, key).index;
 
     console.log({G_INFO_SHEET, index, key});
     if (info.table[index][0] === key)
