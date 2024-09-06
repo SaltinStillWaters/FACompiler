@@ -135,5 +135,5 @@ const initSheetPromise = chrome.storage.local.get(G_KEYS)
 
 function initSheet(spreadsheetID, sheetName)
 {
-    return Sheet.write(spreadsheetID, sheetName, 'A1:G1', [['QUESTIONS', 'CHOICES', 'ANSWERS', 'WRONG ANSWERS', null , 'TOTAL QUESTIONS:', 0]]);
+    return Sheet.write(spreadsheetID, sheetName, 'A1:G1', [['QUESTIONS', 'CHOICES', 'ANSWERS', 'WRONG ANSWERS', 'BACKEND CHOICES', 'BACKEND WRONGS' , 0]]);
 }

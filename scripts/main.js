@@ -13,41 +13,41 @@ const updateQnAPromise = waitCanvasLoader("span.points.question_points")
         rowCountCell: 'G1',
         rowCount: undefined,
         questionColumn: 'A',
-        choiceColumn: 'E',
-        choicesRange: undefined,
+        backEndChoiceColumn: 'E',
+        backEndChoicesRange: undefined,
         firstQuestionMatchIndex: undefined,
         QnAMatchIndex: undefined,
         rowToInsert: -1,
     }
 
+    console.log(sheet)
     return sheet;
 })
 .then(sheet =>
-{
+{// get rowCount
+    console.log(sheet)
     return Sheet.read(SPREADSHEET_ID, sheet.name, sheet.rowCountCell)
     .then(result =>
     {
         sheet.rowCount = Number(result[0][0]);
-        console.log(sheet);
         return sheet;
     })
+    
 })
 .then(sheet =>
 {// check if question exists in sheet
     if (sheet.rowCount === 0)
     {
-        sheet.rowToInsert = 1;
+        sheet.rowToInsert = G_ROW_START - 1; //-1 because it is 0-indexed
         return sheet;
     }
-
+    console.log(sheet)
     const questionsRange = Utils.computeRange(sheet.questionColumn, G_ROW_START, sheet.rowCount);
     return Sheet.read(SPREADSHEET_ID, sheet.name, questionsRange)
     .then(output =>
-    {
+    {// get range all choices with matching questions if question is found
         const first = binarySearch(output, QnA.question, SEARCH.FIRST);
         const last = binarySearch(output, QnA.question, SEARCH.LAST);
-        
-        console.log(first, last, output, QnA.question);
         
         if (!first.isFound)
         {
@@ -56,7 +56,7 @@ const updateQnAPromise = waitCanvasLoader("span.points.question_points")
         else
         {
             sheet.firstQuestionMatchIndex = first.index;
-            sheet.choicesRange = Utils.computeRange(sheet.choiceColumn, G_ROW_START + first.index, last.index - first.index);
+            sheet.backEndChoicesRange = Utils.computeRange(sheet.backEndChoiceColumn, G_ROW_START + first.index, last.index - first.index + 1);
         }
 
         return sheet;
@@ -69,9 +69,11 @@ const updateQnAPromise = waitCanvasLoader("span.points.question_points")
         return sheet;
     }
 
-    return Sheet.read(SPREADSHEET_ID, sheet.name, sheet.choicesRange)
+    console.log(sheet)
+    return Sheet.read(SPREADSHEET_ID, sheet.name, sheet.backEndChoicesRange)
     .then(output =>
-    {
+    {// returns row in sheet where choices match (0-indexed)
+        console.log(output);
         for (let x = 0; x < output.length; ++x)
         {
             const sheetChoice = backEndToStr(output[x][0]);
@@ -163,6 +165,11 @@ function arrToBackEnd(arr)
 
 function backEndToStr(backEnd)
 {
+    if (!backEnd)
+    {
+        return '';
+    }
+
     const escapedDelimiter = G_DELIMITER.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
     return backEnd.replace(new RegExp(escapedDelimiter, 'g'), '');
 }
