@@ -5,8 +5,16 @@ class Utils
         return str.replace(/[\/\?&=#%\"\'\\:<>\|\^\`\[\]]/g, '');
     }
 
+    /**
+     * Computes the range and returns a string in A1 notation (Example: A1:A2)
+     * @param {string} column Column of the range
+     * @param {number} rowStart  Starting row. 0-indexed. With 0 being row 1 in Sheets
+     * @param {number} rowCount Number of rows in the range
+     * @returns {string} The range in A1 notation
+     */
     static computeRange(column, rowStart, rowCount)
     {
+        ++rowStart; //+1 Because it will be converted to str. Meaning row 1 will correspond to precisely the first row in the sheet
         let range = column + rowStart + ':' + column;   //Sample output: A1:A
         return range += Number(rowStart + rowCount - 1);   //-1 because rowStart already counts as one row
     }

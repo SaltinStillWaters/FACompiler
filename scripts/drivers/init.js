@@ -29,9 +29,9 @@ const initSheetPromise = chrome.storage.local.get(G_KEYS)
     let info = 
     {
         createSheet: true,
-        indexToInsert: undefined,
+        indexToInsert: null,
         rowCount: rowCount,
-        range: undefined,
+        range: null,
     };
 
     if (rowCount === 0)

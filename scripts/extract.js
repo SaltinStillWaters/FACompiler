@@ -36,12 +36,12 @@ class Extract
     {
         let QnA =
         {
-            questionStatus: undefined,
-            question: undefined,
-            inputType: undefined,
-            choices: undefined,
-            wrongs: undefined,
-            prevAnswer: undefined,
+            questionStatus: null,
+            question: null,
+            inputType: null,
+            choices: null,
+            wrongs: null,
+            prevAnswer: null,
         }
 
         try

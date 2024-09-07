@@ -11,38 +11,36 @@ const updateQnAPromise = waitCanvasLoader("span.points.question_points")
     {
         name: G_URL_INFO['FANumber'],
         rowCountCell: 'G1',
-        rowCount: undefined,
+        rowCount: null,
         questionColumn: 'A',
         backEndChoiceColumn: 'E',
-        backEndChoicesRange: undefined,
-        firstQuestionMatchIndex: undefined,
-        QnAMatchIndex: undefined,
-        rowToInsert: -1,
+        backEndChoicesRange: null,
+        firstQuestionMatchRow: null,
+        QnAMatchRow: null,
+        rowToInsert: null,
     }
 
-    console.log(sheet)
     return sheet;
 })
 .then(sheet =>
 {// get rowCount
-    console.log(sheet)
     return Sheet.read(SPREADSHEET_ID, sheet.name, sheet.rowCountCell)
     .then(result =>
     {
         sheet.rowCount = Number(result[0][0]);
         return sheet;
     })
-    
 })
 .then(sheet =>
 {// check if question exists in sheet
     if (sheet.rowCount === 0)
     {
-        sheet.rowToInsert = G_ROW_START - 1; //-1 because it is 0-indexed
+        sheet.rowToInsert = G_ROW_START;
         return sheet;
     }
-    console.log(sheet)
+    
     const questionsRange = Utils.computeRange(sheet.questionColumn, G_ROW_START, sheet.rowCount);
+
     return Sheet.read(SPREADSHEET_ID, sheet.name, questionsRange)
     .then(output =>
     {// get range all choices with matching questions if question is found
@@ -51,11 +49,11 @@ const updateQnAPromise = waitCanvasLoader("span.points.question_points")
         
         if (!first.isFound)
         {
-            sheet.rowToInsert = first.index + G_ROW_START - 1;
+            sheet.rowToInsert = first.index + G_ROW_START;
         }
         else
         {
-            sheet.firstQuestionMatchIndex = first.index;
+            sheet.firstQuestionMatchRow = first.index + G_ROW_START;
             sheet.backEndChoicesRange = Utils.computeRange(sheet.backEndChoiceColumn, G_ROW_START + first.index, last.index - first.index + 1);
         }
 
@@ -64,12 +62,8 @@ const updateQnAPromise = waitCanvasLoader("span.points.question_points")
 })
 .then(sheet =>
 {// check if choices match
-    if (sheet.rowToInsert !== -1)
-    {
-        return sheet;
-    }
+    if (sheet.rowToInsert)  return sheet;
 
-    console.log(sheet)
     return Sheet.read(SPREADSHEET_ID, sheet.name, sheet.backEndChoicesRange)
     .then(output =>
     {// returns row in sheet where choices match (0-indexed)
@@ -79,7 +73,6 @@ const updateQnAPromise = waitCanvasLoader("span.points.question_points")
             const sheetChoice = backEndToStr(output[x][0]);
             const canvasChoice = arrToStr(QnA.choices);
 
-            console.log({sheetChoice, canvasChoice});
             if (sheetChoice.length !== canvasChoice.length)
             {
                 continue;
@@ -87,21 +80,34 @@ const updateQnAPromise = waitCanvasLoader("span.points.question_points")
 
             if (sheetChoice === canvasChoice)
             {
-                sheet.QnAMatchIndex = sheet.firstQuestionMatchIndex + x + G_ROW_START - 1;
+                sheet.QnAMatchRow = sheet.firstQuestionMatchRow + x;
                 break;
             }
         }
 
+        if (!sheet.QnAMatchRow)
+        {
+            sheet.rowToInsert = sheet.firstQuestionMatchRow;
+        }
         return sheet;
     });
 })
 .then(sheet =>
 {
-    console.log(sheet);
-    if (sheet.rowToInsert !== -1)
+    console.log('Final sheet info: ', sheet);
+
+    if (sheet.rowToInsert)
     {
-        console.log('insertRow');
+        console.log('insertRow at Row (0-indexed): ' + sheet.rowToInsert);
         return insertQuestion(sheet, QnA);
+    }
+    else if (sheet.QnAMatchRow)
+    {
+        console.log('QnA found at Row (0-indexed): ' + sheet.QnAMatchRow)
+    }
+    else
+    {
+        throw new Error('Unexpected sheet value. Cannot determine wether to update or insert QnA');
     }
 })
 .catch((error) =>
@@ -109,19 +115,19 @@ const updateQnAPromise = waitCanvasLoader("span.points.question_points")
     console.error(error);
 });
 
-function insertQuestion(sheetInfo, QnA)
+function insertQuestion(sheet, QnA)
 {
-    const answer = QnA.questionStatus === Type.Question.CORRECT ? QnA.prevAnswer : undefined;
+    const answer = QnA.questionStatus === Type.Question.CORRECT ? QnA.prevAnswer : null;
     const userChoice = arrToUser(QnA.choices);
     const userWrongs = arrToUser(QnA.wrongs);
     const backEndChoice = arrToBackEnd(QnA.choices);
     const backEndWrongs = arrToBackEnd(QnA.wrongs);
 
     //user side
-    return Sheet.insertRow(SPREADSHEET_ID, sheetInfo.name, sheetInfo.rowToInsert, [QnA.question, userChoice, answer, userWrongs, backEndChoice, backEndWrongs])
+    return Sheet.insertRow(SPREADSHEET_ID, sheet.name, sheet.rowToInsert, [QnA.question, userChoice, answer, userWrongs, backEndChoice, backEndWrongs])
     .then(() =>
     {
-        return Sheet.write(SPREADSHEET_ID, sheetInfo.name, sheetInfo.rowCountCell, [[sheetInfo.rowCount + 1]]);
+        return Sheet.write(SPREADSHEET_ID, sheet.name, sheet.rowCountCell, [[sheet.rowCount + 1]]);
     });
 }
 
