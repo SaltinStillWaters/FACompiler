@@ -87,7 +87,7 @@ const initSheetPromise = chrome.storage.local.get(G_KEYS)
         index++;
     }
 
-    info.indexToInsert = index + 1; //+1 because data starts at row 2
+    info.indexToInsert = index + G_ROW_START;
     return info; 
 })
 .then(info =>
@@ -135,5 +135,5 @@ const initSheetPromise = chrome.storage.local.get(G_KEYS)
 
 function initSheet(spreadsheetID, sheetName)
 {
-    return Sheet.write(spreadsheetID, sheetName, 'A1:G1', [['QUESTIONS', 'CHOICES', 'ANSWERS', 'WRONG ANSWERS', 'BACKEND CHOICES', 'BACKEND WRONGS' , 0]]);
+    return Sheet.write(spreadsheetID, sheetName, 'A1:I1', [['QUESTION', 'CHOICES', 'ANSWER', 'WRONG ANSWERS', 'BACKEND CHOICES', 'BACKEND ANSWER', 'BACKEND WRONGS', 'TOTAL QUESTIONS' , 0]]);
 }

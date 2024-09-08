@@ -1,20 +1,25 @@
-const updateQnAPromise = waitCanvasLoader("span.points.question_points")
+const extractQnAPromise = waitCanvasLoader("span.points.question_points")
 .then(() =>
 {
     console.log('Canvas Loader loaded successfully');
     QnA = Extract.QnAInfo();
     console.log(QnA);
 })
+.catch(error => console.error(error));
+
+Promise.all([initSheetPromise, extractQnAPromise])
 .then(() =>
 {
     let sheet = 
     {
         name: G_URL_INFO['FANumber'],
-        rowCountCell: 'G1',
+        rowCountCell: 'I1',
         rowCount: null,
         questionColumn: 'A',
         backEndChoiceColumn: 'E',
         backEndChoicesRange: null,
+        backEndAnswerColumn: 'F',
+        backEndWrongsColumn: 'G',
         firstQuestionMatchRow: null,
         QnAMatchRow: null,
         rowToInsert: null,
@@ -47,9 +52,14 @@ const updateQnAPromise = waitCanvasLoader("span.points.question_points")
         const first = binarySearch(output, QnA.question, SEARCH.FIRST);
         const last = binarySearch(output, QnA.question, SEARCH.LAST);
         
+        console.log(first, last)
         if (!first.isFound)
         {
             sheet.rowToInsert = first.index + G_ROW_START;
+            if (QnA.question > output[first.index][0])
+            {
+                ++sheet.rowToInsert;
+            }
         }
         else
         {
@@ -64,6 +74,7 @@ const updateQnAPromise = waitCanvasLoader("span.points.question_points")
 {// check if choices match
     if (sheet.rowToInsert)  return sheet;
 
+    console.log(sheet)
     return Sheet.read(SPREADSHEET_ID, sheet.name, sheet.backEndChoicesRange)
     .then(output =>
     {// returns row in sheet where choices match (0-indexed)
@@ -73,12 +84,13 @@ const updateQnAPromise = waitCanvasLoader("span.points.question_points")
             const sheetChoice = backEndToStr(output[x][0]);
             const canvasChoice = arrToStr(QnA.choices);
 
+            console.log(sheetChoice, canvasChoice);
             if (sheetChoice.length !== canvasChoice.length)
             {
                 continue;
             }
 
-            if (sheetChoice === canvasChoice)
+            if (sheetChoice == canvasChoice)
             {
                 sheet.QnAMatchRow = sheet.firstQuestionMatchRow + x;
                 break;
@@ -104,6 +116,7 @@ const updateQnAPromise = waitCanvasLoader("span.points.question_points")
     else if (sheet.QnAMatchRow)
     {
         console.log('QnA found at Row (0-indexed): ' + sheet.QnAMatchRow)
+        return updateQnA(sheet, QnA);
     }
     else
     {
@@ -115,16 +128,48 @@ const updateQnAPromise = waitCanvasLoader("span.points.question_points")
     console.error(error);
 });
 
+function updateQnA(sheet, QnA)
+{
+    const backEndAnswerRange = Utils.computeRange(sheet.backEndAnswerColumn, sheet.QnAMatchRow, 1);
+
+    return Sheet.read(SPREADSHEET_ID, sheet.name, backEndAnswerRange)
+    .then(result =>
+    {
+        result = result[0][0];
+
+        if (result)
+        {
+            if (QnA.inputType === Type.Input.TEXT)
+            {
+                if (QnA.questionStatus === Type.Question.CORRECT)
+                {
+                    const backEndAnwers = backEndToArr(result);
+                    if (!backEndAnwers.includes(QnA.answer))
+                    {
+                        return Sheet.write(SPREADSHEET_ID, sheet.name, backEndAnswerRange, [[result + QnA.answer]]);
+                    }
+                }
+            }
+        }
+    })
+}
+
 function insertQuestion(sheet, QnA)
 {
     const answer = QnA.questionStatus === Type.Question.CORRECT ? QnA.prevAnswer : null;
     const userChoice = arrToUser(QnA.choices);
     const userWrongs = arrToUser(QnA.wrongs);
-    const backEndChoice = arrToBackEnd(QnA.choices);
-    const backEndWrongs = arrToBackEnd(QnA.wrongs);
+
+    let backEndChoice = arrToBackEnd(QnA.choices);
+    backEndChoice = backEndChoice ? backEndChoice : G_DELIMITER;
+
+    let backEndAnswer = answer + G_DELIMITER;
+
+    let backEndWrongs = arrToBackEnd(QnA.wrongs);
+    backEndWrongs = backEndWrongs ? backEndWrongs : G_DELIMITER;
 
     //user side
-    return Sheet.insertRow(SPREADSHEET_ID, sheet.name, sheet.rowToInsert, [QnA.question, userChoice, answer, userWrongs, backEndChoice, backEndWrongs])
+    return Sheet.insertRow(SPREADSHEET_ID, sheet.name, sheet.rowToInsert, [QnA.question, userChoice, answer, userWrongs, backEndChoice, backEndAnswer, backEndWrongs])
     .then(() =>
     {
         return Sheet.write(SPREADSHEET_ID, sheet.name, sheet.rowCountCell, [[sheet.rowCount + 1]]);
@@ -167,6 +212,10 @@ function arrToBackEnd(arr)
     });
 
     return str;
+}
+function backEndToArr(backEnd)
+{
+    return backEnd.split(G_DELIMITER);
 }
 
 function backEndToStr(backEnd)
