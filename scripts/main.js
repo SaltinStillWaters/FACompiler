@@ -85,12 +85,21 @@ Promise.all([initSheetPromise, extractQnAPromise])
             const canvasChoice = arrToStr(QnA.choices);
 
             console.log(sheetChoice, canvasChoice);
-            if (sheetChoice.length !== canvasChoice.length)
+            
+            if (QnA.inputType === Type.Input.TEXT)
             {
-                continue;
-            }
+                if (sheetChoice === G_DELIMITER)
+                {
+                    sheet.QnAMatchRow = sheet.firstQuestionMatchRow + x;
+                    break;
+                }
 
-            if (sheetChoice == canvasChoice)
+                if (sheetChoice.length !== canvasChoice.length)
+                {
+                    continue;
+                }
+            }
+            else if (sheetChoice == canvasChoice)
             {
                 sheet.QnAMatchRow = sheet.firstQuestionMatchRow + x;
                 break;
@@ -163,7 +172,7 @@ function insertQuestion(sheet, QnA)
     let backEndChoice = arrToBackEnd(QnA.choices);
     backEndChoice = backEndChoice ? backEndChoice : G_DELIMITER;
 
-    let backEndAnswer = answer + G_DELIMITER;
+    let backEndAnswer = answer ? answer + G_DELIMITER : G_DELIMITER;
 
     let backEndWrongs = arrToBackEnd(QnA.wrongs);
     backEndWrongs = backEndWrongs ? backEndWrongs : G_DELIMITER;
@@ -224,6 +233,10 @@ function backEndToStr(backEnd)
     {
         return '';
     }
+    else if (backEnd === G_DELIMITER)
+    {
+        return backEnd;
+    }
 
     const escapedDelimiter = G_DELIMITER.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
     return backEnd.replace(new RegExp(escapedDelimiter, 'g'), '');
@@ -232,10 +245,13 @@ function backEndToStr(backEnd)
 function arrToStr(arr)
 {
     let str = '';
-    arr.forEach(x =>
+    if (arr)
     {
-        str += x;
-    });
+        arr.forEach(x =>
+        {
+            str += x;
+        });
+    }
 
     return str;
 }
