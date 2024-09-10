@@ -23,6 +23,8 @@ Promise.all([initSheetPromise, extractQnAPromise])
         firstQuestionMatchRow: null,
         QnAMatchRow: null,
         rowToInsert: null,
+        userAnswerColumn: 'C',
+        userWrongsColumn: 'D',
     }
 
     return sheet;
@@ -140,26 +142,92 @@ Promise.all([initSheetPromise, extractQnAPromise])
 function updateQnA(sheet, QnA)
 {
     const backEndAnswerRange = Utils.computeRange(sheet.backEndAnswerColumn, sheet.QnAMatchRow, 1);
+    const userAnswerRange = Utils.computeRange(sheet.userAnswerColumn, sheet.QnAMatchRow, 1);
 
+    let status = 
+    {
+        done: false,
+        sheetBackEndAnswer: null,
+    };
+
+    console.log('updating')
     return Sheet.read(SPREADSHEET_ID, sheet.name, backEndAnswerRange)
     .then(result =>
-    {
+    { //update for inputType === TEXT with correct answer
         result = result[0][0];
-
-        if (result)
+        status.sheetBackEndAnswer = result;
+        console.log('read: ', result)
+        if (result && QnA.inputType === Type.Input.TEXT && QnA.questionStatus === Type.Question.CORRECT)
         {
-            if (QnA.inputType === Type.Input.TEXT)
+            updateDone = true;
+            console.log('passed')
+            const backEndAnwers = backEndToArr(result);
+            if (!backEndAnwers.includes(QnA.prevAnswer))
             {
-                if (QnA.questionStatus === Type.Question.CORRECT)
+                let newBackEndAnswers = result === G_DELIMITER ? '' : result;
+                newBackEndAnswers += QnA.prevAnswer + G_DELIMITER;
+                console.log('not included')
+                return Sheet.write(SPREADSHEET_ID, sheet.name, backEndAnswerRange, [[newBackEndAnswers]])
+                .then(() =>
                 {
-                    const backEndAnwers = backEndToArr(result);
-                    if (!backEndAnwers.includes(QnA.answer))
-                    {
-                        return Sheet.write(SPREADSHEET_ID, sheet.name, backEndAnswerRange, [[result + QnA.answer]]);
-                    }
-                }
+                    
+                    const newAnswer = backEndToStr(newBackEndAnswers, '\n\n');
+                    return Sheet.write(SPREADSHEET_ID, sheet.name, userAnswerRange, [[newAnswer]]);
+                })
             }
         }
+    })
+    .then(() =>
+    { //update for inputType === RADIO with correct answer
+        console.log(status);
+        if (status.done) return;
+        console.log('updating radio button')
+        if (QnA.inputType !== Type.Input.RADIO || status.sheetBackEndAnswer !== G_DELIMITER) return;
+        if (QnA.questionStatus === Type.Question.CORRECT)
+        {
+            console.log('passed')
+            status.done = true;
+            return Sheet.write(SPREADSHEET_ID, sheet.name, backEndAnswerRange, [[QnA.prevAnswer]])
+            .then(() =>
+            {    
+                return Sheet.write(SPREADSHEET_ID, sheet.name, userAnswerRange, [[QnA.prevAnswer]]);
+            })
+        }
+    })
+    .then(() =>
+    { //update for inputType === RADIO with wrong answer
+        console.log('updating radio with wrong answer')
+        if (status.done) return;
+
+        if (QnA.inputType !== Type.Input.RADIO || status.sheetBackEndAnswer !== G_DELIMITER) return;
+        console.log('passed')
+        const backEndWrongsRange = Utils.computeRange(sheet.backEndWrongsColumn, sheet.QnAMatchRow, 1);
+        const userWrongsRange = Utils.computeRange(sheet.userWrongsColumn, sheet.QnAMatchRow, 1);
+
+        return Sheet.read(SPREADSHEET_ID, sheet.name, backEndWrongsRange)
+        .then(result =>
+        {
+            result = result[0][0];
+            console.log('read: ', result);
+            const backEndWrongs = backEndToArr(result);
+
+            let newBackEndWrongs = result;
+            QnA.wrongs.forEach(wrong =>
+            {
+                if (wrong && !backEndWrongs.includes(wrong))
+                {
+                    newBackEndWrongs += wrong + G_DELIMITER;
+                }
+            });
+            console.log(newBackEndWrongs)
+
+            return Sheet.write(SPREADSHEET_ID, sheet.name, backEndWrongsRange, [[newBackEndWrongs]])
+            .then(() =>
+            {
+                const newAnswer = backEndToStr(newBackEndWrongs, '\n\n');
+                return Sheet.write(SPREADSHEET_ID, sheet.name, userWrongsRange, [[newAnswer]]);
+            })
+        })
     })
 }
 
@@ -227,7 +295,7 @@ function backEndToArr(backEnd)
     return backEnd.split(G_DELIMITER);
 }
 
-function backEndToStr(backEnd)
+function backEndToStr(backEnd, delimiter = '')
 {
     if (!backEnd)
     {
@@ -239,7 +307,7 @@ function backEndToStr(backEnd)
     }
 
     const escapedDelimiter = G_DELIMITER.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-    return backEnd.replace(new RegExp(escapedDelimiter, 'g'), '');
+    return backEnd.replace(new RegExp(escapedDelimiter, 'g'), delimiter);
 }
 
 function arrToStr(arr)
@@ -249,7 +317,10 @@ function arrToStr(arr)
     {
         arr.forEach(x =>
         {
-            str += x;
+            if (x)
+            {
+                str += x;
+            }
         });
     }
 

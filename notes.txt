@@ -12,14 +12,5 @@ decide whether to keep question id or not
 
 to do (next):
 
-finish currSheet class
-in checking if a question exists, check length
-encapsulate global vars
-make it so that all methods does not use global variables. Instead all global variables must be in main.js
-
-
-
-
-
-
-
+refactor code because it is too slow
+    possibly use background script for caching
