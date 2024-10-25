@@ -90,6 +90,7 @@ Promise.all([initSheetPromise, extractQnAPromise])
             
             if (QnA.inputType === Type.Input.TEXT)
             {
+                //this means current sheet row is also Input.Text
                 if (sheetChoice === G_DELIMITER)
                 {
                     sheet.QnAMatchRow = sheet.firstQuestionMatchRow + x;
@@ -105,6 +106,27 @@ Promise.all([initSheetPromise, extractQnAPromise])
             {
                 sheet.QnAMatchRow = sheet.firstQuestionMatchRow + x;
                 break;
+            }
+            else if (sheetChoice.length == canvasChoice.length)
+            {
+                const sheetArrChoice = backEndToArr(output[x][0]);
+                const canvasArrChoice = QnA.choices;
+
+                let isMatch = true;
+
+                for (let y = 0; y < sheetArrChoice.length; ++y) 
+                {
+                    if (!canvasArrChoice.includes(sheetArrChoice[y])) 
+                    {
+                        isMatch = false;
+                        break;
+                    }
+                }
+
+                if (isMatch)
+                {
+                    sheet.QnAMatchRow = sheet.firstQuestionMatchRow + x;
+                }
             }
         }
 
